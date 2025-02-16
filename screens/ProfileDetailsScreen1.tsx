@@ -7,6 +7,7 @@ import PickerModal from "../components/PickerModal"
 import ProgressBar from "../components/ProgressBar"
 import { useNavigation } from "@react-navigation/native"
 import { theme } from "../styles/theme"
+import BackButton from "../components/BackButton"
 
 export default function ProfileDetailsScreen1({ route }) {
   const { relation, name } = route.params
@@ -43,12 +44,19 @@ export default function ProfileDetailsScreen1({ route }) {
   }
 
   const handleNext = () => {
-    navigation.navigate("ProfileDetails2", { relation, name, dateOfBirth, gender, height })
+    navigation.navigate("ProfileDetails2", {
+      relation,
+      name,
+      dateOfBirth: dateOfBirth.toISOString(), // Convert Date to string
+      gender,
+      height,
+    })
   }
 
   return (
     <ScrollView style={styles.container}>
-      <ProgressBar currentStep={3} totalSteps={4} />
+      <BackButton />
+      <ProgressBar currentStep={3} totalSteps={5} />
       <Text style={styles.title}>Profile Details for {name}</Text>
 
       <Text style={styles.label}>Date of Birth</Text>
@@ -105,6 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
+    paddingTop: 100, // Add this line
   },
   title: {
     fontSize: 24,

@@ -1,100 +1,168 @@
 "use client"
 
 import { useState } from "react"
-import { Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native"
-import DateTimePicker from "@react-native-community/datetimepicker"
+import { Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native"
 import PickerModal from "../components/PickerModal"
 import ProgressBar from "../components/ProgressBar"
-import { useNavigation } from "@react-navigation/native"
 import { theme } from "../styles/theme"
+import { useNavigation } from "@react-navigation/native"
+import BackButton from "../components/BackButton"
 
-export default function ProfileDetailsScreen1({ route }) {
-  const { relation, name } = route.params
-  const [dateOfBirth, setDateOfBirth] = useState(new Date())
-  const [showDatePicker, setShowDatePicker] = useState(false)
-  const [gender, setGender] = useState("")
-  const [showGenderPicker, setShowGenderPicker] = useState(false)
-  const [height, setHeight] = useState("")
-  const [showHeightPicker, setShowHeightPicker] = useState(false)
+export default function ProfileDetailsScreen2({ route }) {
   const navigation = useNavigation()
+  const { name, dateOfBirth: dateOfBirthString } = route.params
+  const dateOfBirth = new Date(dateOfBirthString) // Convert string back to Date object if needed
+  const [maritalStatus, setMaritalStatus] = useState("")
+  const [showMaritalStatusPicker, setShowMaritalStatusPicker] = useState(false)
+  const [hasChildren, setHasChildren] = useState("")
+  const [showChildrenPicker, setShowChildrenPicker] = useState(false)
+  const [religion, setReligion] = useState("")
+  const [showReligionPicker, setShowReligionPicker] = useState(false)
+  const [islamicSect, setIslamicSect] = useState("")
+  const [showIslamicSectPicker, setShowIslamicSectPicker] = useState(false)
+  const [otherSect, setOtherSect] = useState("")
+  const [coverHead, setCoverHead] = useState("")
+  const [showCoverHeadPicker, setShowCoverHeadPicker] = useState(false)
+  const [coverHeadType, setCoverHeadType] = useState("")
+  const [showCoverHeadTypePicker, setShowCoverHeadTypePicker] = useState(false)
 
-  const generateHeightOptions = () => {
-    const options = []
-    for (let feet = 4; feet <= 7; feet++) {
-      for (let inches = 0; inches < 12; inches++) {
-        // Stop at 7'0"
-        if (feet === 7 && inches > 0) break
-
-        const totalInches = feet * 12 + inches
-        options.push({
-          label: `${feet}'${inches}"`,
-          value: totalInches.toString(),
-        })
-      }
-    }
-    return options
-  }
-
-  const formatHeight = (heightInInches) => {
-    if (!heightInInches) return "Select height"
-    const feet = Math.floor(Number.parseInt(heightInInches) / 12)
-    const inches = Number.parseInt(heightInInches) % 12
-    return `${feet}'${inches}"`
-  }
-
-  const handleNext = () => {
-    navigation.navigate("ProfileDetails2", { relation, name, dateOfBirth, gender, height })
+  const handleSubmit = () => {
+    navigation.navigate("ProfileEthnicity", {
+      ...route.params,
+      dateOfBirth: dateOfBirthString, // Keep it as a string
+      maritalStatus,
+      hasChildren,
+      religion,
+      islamicSect,
+      otherSect,
+      coverHead,
+      coverHeadType,
+    })
   }
 
   return (
     <ScrollView style={styles.container}>
-      <ProgressBar currentStep={3} totalSteps={4} />
-      <Text style={styles.title}>Profile Details for {name}</Text>
+      <BackButton />
+      <ProgressBar currentStep={4} totalSteps={5} />
+      <Text style={styles.title}>More about {name}</Text>
 
-      <Text style={styles.label}>Date of Birth</Text>
-      <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
-        <Text>{dateOfBirth.toDateString()}</Text>
+      <Text style={styles.label}>What is {name}'s marital status?</Text>
+      <TouchableOpacity style={styles.input} onPress={() => setShowMaritalStatusPicker(true)}>
+        <Text>{maritalStatus ? maritalStatus.replace("_", " ") : "Select marital status"}</Text>
       </TouchableOpacity>
-      {showDatePicker && (
-        <DateTimePicker
-          value={dateOfBirth}
-          mode="date"
-          display="default"
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false)
-            if (selectedDate) setDateOfBirth(selectedDate)
-          }}
-        />
+      <PickerModal
+        visible={showMaritalStatusPicker}
+        onClose={() => setShowMaritalStatusPicker(false)}
+        onSelect={(value) => setMaritalStatus(value)}
+        options={[
+          { label: "Never Married", value: "never_married" },
+          { label: "Divorced", value: "divorced" },
+          { label: "Widowed", value: "widowed" },
+        ]}
+        selectedValue={maritalStatus}
+      />
+
+      {maritalStatus === "divorced" && (
+        <>
+          <Text style={styles.label}>Do you have any children?</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setShowChildrenPicker(true)}>
+            <Text>{hasChildren || "Select option"}</Text>
+          </TouchableOpacity>
+          <PickerModal
+            visible={showChildrenPicker}
+            onClose={() => setShowChildrenPicker(false)}
+            onSelect={(value) => setHasChildren(value)}
+            options={[
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" },
+            ]}
+            selectedValue={hasChildren}
+          />
+        </>
       )}
 
-      <Text style={styles.label}>Gender</Text>
-      <TouchableOpacity style={styles.input} onPress={() => setShowGenderPicker(true)}>
-        <Text>{gender || "Select gender"}</Text>
+      <Text style={styles.label}>What is {name}'s religion?</Text>
+      <TouchableOpacity style={styles.input} onPress={() => setShowReligionPicker(true)}>
+        <Text>{religion || "Select religion"}</Text>
       </TouchableOpacity>
       <PickerModal
-        visible={showGenderPicker}
-        onClose={() => setShowGenderPicker(false)}
-        onSelect={(value) => setGender(value)}
+        visible={showReligionPicker}
+        onClose={() => setShowReligionPicker(false)}
+        onSelect={(value) => setReligion(value)}
         options={[
-          { label: "Male", value: "male" },
-          { label: "Female", value: "female" },
+          { label: "Islam", value: "Islam" },
+          { label: "Christianity", value: "Christianity" },
+          { label: "Hinduism", value: "Hinduism" },
         ]}
-        selectedValue={gender}
+        selectedValue={religion}
       />
 
-      <Text style={styles.label}>Height</Text>
-      <TouchableOpacity style={styles.input} onPress={() => setShowHeightPicker(true)}>
-        <Text>{formatHeight(height)}</Text>
-      </TouchableOpacity>
-      <PickerModal
-        visible={showHeightPicker}
-        onClose={() => setShowHeightPicker(false)}
-        onSelect={(value) => setHeight(value)}
-        options={generateHeightOptions()}
-        selectedValue={height}
-      />
+      {religion === "Islam" && (
+        <>
+          <Text style={styles.label}>What is their Islamic sect?</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setShowIslamicSectPicker(true)}>
+            <Text>{islamicSect || "Select Islamic sect"}</Text>
+          </TouchableOpacity>
+          <PickerModal
+            visible={showIslamicSectPicker}
+            onClose={() => setShowIslamicSectPicker(false)}
+            onSelect={(value) => setIslamicSect(value)}
+            options={[
+              { label: "Sunni", value: "Sunni" },
+              { label: "Shia", value: "Shia" },
+              { label: "Other", value: "Other" },
+            ]}
+            selectedValue={islamicSect}
+          />
+          {islamicSect === "Other" && (
+            <TextInput
+              style={styles.input}
+              placeholder="Please specify"
+              value={otherSect}
+              onChangeText={setOtherSect}
+            />
+          )}
+        </>
+      )}
 
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
+      {route.params.gender === "female" && (
+        <>
+          <Text style={styles.label}>Does {name} cover her head?</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadPicker(true)}>
+            <Text>{coverHead || "Select option"}</Text>
+          </TouchableOpacity>
+          <PickerModal
+            visible={showCoverHeadPicker}
+            onClose={() => setShowCoverHeadPicker(false)}
+            onSelect={(value) => setCoverHead(value)}
+            options={[
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" },
+            ]}
+            selectedValue={coverHead}
+          />
+          {coverHead === "yes" && (
+            <>
+              <Text style={styles.label}>Please specify:</Text>
+              <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadTypePicker(true)}>
+                <Text>{coverHeadType || "Select option"}</Text>
+              </TouchableOpacity>
+              <PickerModal
+                visible={showCoverHeadTypePicker}
+                onClose={() => setShowCoverHeadTypePicker(false)}
+                onSelect={(value) => setCoverHeadType(value)}
+                options={[
+                  { label: "With a dupatta", value: "dupatta" },
+                  { label: "With an aabaya/hijaab", value: "aabaya_hijaab" },
+                ]}
+                selectedValue={coverHeadType}
+              />
+            </>
+          )}
+        </>
+      )}
+
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -105,6 +173,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
+    paddingTop: 100,
   },
   title: {
     fontSize: 24,

@@ -5,9 +5,13 @@ import { Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react
 import PickerModal from "../components/PickerModal"
 import ProgressBar from "../components/ProgressBar"
 import { theme } from "../styles/theme"
+import { useNavigation } from "@react-navigation/native"
+import BackButton from "../components/BackButton"
 
 export default function ProfileDetailsScreen2({ route }) {
-  const { name } = route.params
+  const navigation = useNavigation()
+  const { name, dateOfBirth: dateOfBirthString } = route.params
+  const dateOfBirth = new Date(dateOfBirthString) // Convert string back to Date object if needed
   const [maritalStatus, setMaritalStatus] = useState("")
   const [showMaritalStatusPicker, setShowMaritalStatusPicker] = useState(false)
   const [hasChildren, setHasChildren] = useState("")
@@ -17,14 +21,29 @@ export default function ProfileDetailsScreen2({ route }) {
   const [islamicSect, setIslamicSect] = useState("")
   const [showIslamicSectPicker, setShowIslamicSectPicker] = useState(false)
   const [otherSect, setOtherSect] = useState("")
+  const [coverHead, setCoverHead] = useState("")
+  const [showCoverHeadPicker, setShowCoverHeadPicker] = useState(false)
+  const [coverHeadType, setCoverHeadType] = useState("")
+  const [showCoverHeadTypePicker, setShowCoverHeadTypePicker] = useState(false)
 
   const handleSubmit = () => {
-    console.log("Profile details:", { ...route.params, maritalStatus, hasChildren, religion, islamicSect, otherSect })
+    navigation.navigate("ProfileEthnicity", {
+      ...route.params,
+      dateOfBirth: dateOfBirthString, // Keep it as a string
+      maritalStatus,
+      hasChildren,
+      religion,
+      islamicSect,
+      otherSect,
+      coverHead,
+      coverHeadType,
+    })
   }
 
   return (
     <ScrollView style={styles.container}>
-      <ProgressBar currentStep={4} totalSteps={4} />
+      <BackButton />
+      <ProgressBar currentStep={4} totalSteps={5} />
       <Text style={styles.title}>More about {name}</Text>
 
       <Text style={styles.label}>What is {name}'s marital status?</Text>
@@ -106,8 +125,45 @@ export default function ProfileDetailsScreen2({ route }) {
         </>
       )}
 
+      {route.params.gender === "female" && (
+        <>
+          <Text style={styles.label}>Does {name} cover her head?</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadPicker(true)}>
+            <Text>{coverHead || "Select option"}</Text>
+          </TouchableOpacity>
+          <PickerModal
+            visible={showCoverHeadPicker}
+            onClose={() => setShowCoverHeadPicker(false)}
+            onSelect={(value) => setCoverHead(value)}
+            options={[
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" },
+            ]}
+            selectedValue={coverHead}
+          />
+          {coverHead === "yes" && (
+            <>
+              <Text style={styles.label}>Please specify:</Text>
+              <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadTypePicker(true)}>
+                <Text>{coverHeadType || "Select option"}</Text>
+              </TouchableOpacity>
+              <PickerModal
+                visible={showCoverHeadTypePicker}
+                onClose={() => setShowCoverHeadTypePicker(false)}
+                onSelect={(value) => setCoverHeadType(value)}
+                options={[
+                  { label: "With a dupatta", value: "dupatta" },
+                  { label: "With an aabaya/hijaab", value: "aabaya_hijaab" },
+                ]}
+                selectedValue={coverHeadType}
+              />
+            </>
+          )}
+        </>
+      )}
+
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
+        <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
     </ScrollView>
   )
@@ -117,6 +173,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
+    paddingTop: 100,
   },
   title: {
     fontSize: 24,

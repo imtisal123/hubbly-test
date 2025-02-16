@@ -7,29 +7,28 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
+  const progress = (currentStep / totalSteps) * 100
+
   return (
     <View style={styles.container}>
-      <View style={styles.bar}>
-        <View style={[styles.progress, { width: `${(currentStep / totalSteps) * 100}%` }]} />
-      </View>
+      <View style={[styles.progressBar, { width: `${progress}%` }]} />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  bar: {
-    height: 4,
+    height: 10,
     backgroundColor: theme.border,
-    borderRadius: 2,
+    borderRadius: 5,
+    overflow: "hidden",
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 10,
   },
-  progress: {
+  progressBar: {
     height: "100%",
     backgroundColor: theme.primary,
-    borderRadius: 2,
   },
 })
 

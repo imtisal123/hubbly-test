@@ -4,6 +4,8 @@ import { useState } from "react"
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { theme } from "../styles/theme"
+import BackButton from "../components/BackButton"
+import ProgressBar from "../components/ProgressBar"
 
 export default function NameScreen({ route }) {
   const { relation } = route.params
@@ -18,6 +20,8 @@ export default function NameScreen({ route }) {
 
   return (
     <View style={styles.container}>
+      <BackButton />
+      <ProgressBar currentStep={2} totalSteps={5} />
       <Text style={styles.title}>What is their name?</Text>
       <TextInput style={styles.input} placeholder="Enter name" value={name} onChangeText={setName} />
       <TouchableOpacity style={styles.button} onPress={handleNext}>
@@ -30,10 +34,8 @@ export default function NameScreen({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: theme.background,
-    padding: 20,
+    paddingTop: 100,
   },
   title: {
     fontSize: 24,

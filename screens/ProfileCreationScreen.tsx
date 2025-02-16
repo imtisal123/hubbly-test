@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native"
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
 import PickerModal from "../components/PickerModal"
 import ProgressBar from "../components/ProgressBar"
 import { useNavigation } from "@react-navigation/native"
 import { theme } from "../styles/theme"
+import BackButton from "../components/BackButton"
 
 export default function ProfileCreationScreen() {
   const [relation, setRelation] = useState("")
@@ -14,12 +15,14 @@ export default function ProfileCreationScreen() {
   const navigation = useNavigation()
 
   const handleNext = () => {
-    navigation.navigate("Name", { relation: relation === "Other" ? otherRelation : relation })
+    const gender = relation === "Daughter" || relation === "Sister" ? "female" : "male"
+    navigation.navigate("Name", { relation, gender })
   }
 
   return (
     <View style={styles.container}>
-      <ProgressBar currentStep={1} totalSteps={4} />
+      <BackButton />
+      <ProgressBar currentStep={1} totalSteps={5} />
       <Text style={styles.title}>Who are you creating this profile for?</Text>
       <TouchableOpacity style={styles.input} onPress={() => setShowPicker(true)}>
         <Text>{relation || "Select relation"}</Text>
@@ -33,19 +36,10 @@ export default function ProfileCreationScreen() {
           { label: "Son", value: "Son" },
           { label: "Brother", value: "Brother" },
           { label: "Sister", value: "Sister" },
-          { label: "Relative", value: "Relative" },
-          { label: "Other", value: "Other" },
         ]}
         selectedValue={relation}
       />
-      {relation === "Other" && (
-        <TextInput
-          style={styles.input}
-          placeholder="Please specify"
-          value={otherRelation}
-          onChangeText={setOtherRelation}
-        />
-      )}
+
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
@@ -57,6 +51,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
+    paddingTop: 100,
   },
   title: {
     fontSize: 24,
