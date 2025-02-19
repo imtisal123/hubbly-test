@@ -1,21 +1,24 @@
 "use client"
 
 import { useState } from "react"
-import { Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native"
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, TextInput } from "react-native"
+import { useNavigation, useRoute } from "@react-navigation/native"
 import PickerModal from "../components/PickerModal"
 import ProgressBar from "../components/ProgressBar"
 import { theme } from "../styles/theme"
-import { useNavigation } from "@react-navigation/native"
 import BackButton from "../components/BackButton"
 
-export default function ProfileDetailsScreen2({ route }) {
+export default function ProfileDetailsScreen2() {
   const navigation = useNavigation()
+  const route = useRoute()
   const { name, dateOfBirth: dateOfBirthString } = route.params
-  const dateOfBirth = new Date(dateOfBirthString) // Convert string back to Date object if needed
+  const dateOfBirth = new Date(dateOfBirthString)
   const [maritalStatus, setMaritalStatus] = useState("")
   const [showMaritalStatusPicker, setShowMaritalStatusPicker] = useState(false)
   const [hasChildren, setHasChildren] = useState("")
   const [showChildrenPicker, setShowChildrenPicker] = useState(false)
+  const [numberOfChildren, setNumberOfChildren] = useState("")
+  const [showNumberOfChildrenPicker, setShowNumberOfChildrenPicker] = useState(false)
   const [religion, setReligion] = useState("")
   const [showReligionPicker, setShowReligionPicker] = useState(false)
   const [islamicSect, setIslamicSect] = useState("")
@@ -29,9 +32,10 @@ export default function ProfileDetailsScreen2({ route }) {
   const handleSubmit = () => {
     navigation.navigate("ProfileEthnicity", {
       ...route.params,
-      dateOfBirth: dateOfBirthString, // Keep it as a string
+      dateOfBirth: dateOfBirthString,
       maritalStatus,
       hasChildren,
+      numberOfChildren,
       religion,
       islamicSect,
       otherSect,
@@ -40,132 +44,164 @@ export default function ProfileDetailsScreen2({ route }) {
     })
   }
 
+  const generateNumberOfChildrenOptions = () => {
+    return Array.from({ length: 10 }, (_, i) => ({
+      label: (i + 1).toString(),
+      value: (i + 1).toString(),
+    }))
+  }
+
   return (
-    <ScrollView style={styles.container}>
-      <BackButton />
-      <ProgressBar currentStep={4} totalSteps={5} />
-      <Text style={styles.title}>More about {name}</Text>
+    <View style={styles.container}>
+      <BackButton style={styles.backButton} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProgressBar currentStep={4} totalSteps={10} />
+        <Text style={styles.title}>More about {name}</Text>
 
-      <Text style={styles.label}>What is {name}'s marital status?</Text>
-      <TouchableOpacity style={styles.input} onPress={() => setShowMaritalStatusPicker(true)}>
-        <Text>{maritalStatus ? maritalStatus.replace("_", " ") : "Select marital status"}</Text>
-      </TouchableOpacity>
-      <PickerModal
-        visible={showMaritalStatusPicker}
-        onClose={() => setShowMaritalStatusPicker(false)}
-        onSelect={(value) => setMaritalStatus(value)}
-        options={[
-          { label: "Never Married", value: "never_married" },
-          { label: "Divorced", value: "divorced" },
-          { label: "Widowed", value: "widowed" },
-        ]}
-        selectedValue={maritalStatus}
-      />
+        <Text style={styles.label}>What is {name}'s marital status?</Text>
+        <TouchableOpacity style={styles.input} onPress={() => setShowMaritalStatusPicker(true)}>
+          <Text>{maritalStatus ? maritalStatus : "Select marital status"}</Text>
+        </TouchableOpacity>
+        <PickerModal
+          visible={showMaritalStatusPicker}
+          onClose={() => setShowMaritalStatusPicker(false)}
+          onSelect={(value) =>
+            setMaritalStatus(
+              value
+                .split("_")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" "),
+            )
+          }
+          options={[
+            { label: "Never Married", value: "never_married" },
+            { label: "Divorced", value: "divorced" },
+            { label: "Widowed", value: "widowed" },
+          ]}
+          selectedValue={maritalStatus}
+        />
 
-      {maritalStatus === "divorced" && (
-        <>
-          <Text style={styles.label}>Do you have any children?</Text>
-          <TouchableOpacity style={styles.input} onPress={() => setShowChildrenPicker(true)}>
-            <Text>{hasChildren || "Select option"}</Text>
-          </TouchableOpacity>
-          <PickerModal
-            visible={showChildrenPicker}
-            onClose={() => setShowChildrenPicker(false)}
-            onSelect={(value) => setHasChildren(value)}
-            options={[
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" },
-            ]}
-            selectedValue={hasChildren}
-          />
-        </>
-      )}
-
-      <Text style={styles.label}>What is {name}'s religion?</Text>
-      <TouchableOpacity style={styles.input} onPress={() => setShowReligionPicker(true)}>
-        <Text>{religion || "Select religion"}</Text>
-      </TouchableOpacity>
-      <PickerModal
-        visible={showReligionPicker}
-        onClose={() => setShowReligionPicker(false)}
-        onSelect={(value) => setReligion(value)}
-        options={[
-          { label: "Islam", value: "Islam" },
-          { label: "Christianity", value: "Christianity" },
-          { label: "Hinduism", value: "Hinduism" },
-        ]}
-        selectedValue={religion}
-      />
-
-      {religion === "Islam" && (
-        <>
-          <Text style={styles.label}>What is their Islamic sect?</Text>
-          <TouchableOpacity style={styles.input} onPress={() => setShowIslamicSectPicker(true)}>
-            <Text>{islamicSect || "Select Islamic sect"}</Text>
-          </TouchableOpacity>
-          <PickerModal
-            visible={showIslamicSectPicker}
-            onClose={() => setShowIslamicSectPicker(false)}
-            onSelect={(value) => setIslamicSect(value)}
-            options={[
-              { label: "Sunni", value: "Sunni" },
-              { label: "Shia", value: "Shia" },
-              { label: "Other", value: "Other" },
-            ]}
-            selectedValue={islamicSect}
-          />
-          {islamicSect === "Other" && (
-            <TextInput
-              style={styles.input}
-              placeholder="Please specify"
-              value={otherSect}
-              onChangeText={setOtherSect}
+        {(maritalStatus === "Divorced" || maritalStatus === "Widowed") && (
+          <>
+            <Text style={styles.label}>Does {name} have any children?</Text>
+            <TouchableOpacity style={styles.input} onPress={() => setShowChildrenPicker(true)}>
+              <Text>{hasChildren || "Select option"}</Text>
+            </TouchableOpacity>
+            <PickerModal
+              visible={showChildrenPicker}
+              onClose={() => setShowChildrenPicker(false)}
+              onSelect={(value) => setHasChildren(value.charAt(0).toUpperCase() + value.slice(1))}
+              options={[
+                { label: "Yes", value: "yes" },
+                { label: "No", value: "no" },
+              ]}
+              selectedValue={hasChildren}
             />
-          )}
-        </>
-      )}
+          </>
+        )}
 
-      {route.params.gender === "female" && (
-        <>
-          <Text style={styles.label}>Does {name} cover her head?</Text>
-          <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadPicker(true)}>
-            <Text>{coverHead || "Select option"}</Text>
-          </TouchableOpacity>
-          <PickerModal
-            visible={showCoverHeadPicker}
-            onClose={() => setShowCoverHeadPicker(false)}
-            onSelect={(value) => setCoverHead(value)}
-            options={[
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" },
-            ]}
-            selectedValue={coverHead}
-          />
-          {coverHead === "yes" && (
-            <>
-              <Text style={styles.label}>Please specify:</Text>
-              <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadTypePicker(true)}>
-                <Text>{coverHeadType || "Select option"}</Text>
-              </TouchableOpacity>
-              <PickerModal
-                visible={showCoverHeadTypePicker}
-                onClose={() => setShowCoverHeadTypePicker(false)}
-                onSelect={(value) => setCoverHeadType(value)}
-                options={[
-                  { label: "With a dupatta", value: "dupatta" },
-                  { label: "With an aabaya/hijaab", value: "aabaya_hijaab" },
-                ]}
-                selectedValue={coverHeadType}
+        {hasChildren === "Yes" && (
+          <>
+            <Text style={styles.label}>How many children do you have?</Text>
+            <TouchableOpacity style={styles.input} onPress={() => setShowNumberOfChildrenPicker(true)}>
+              <Text>{numberOfChildren || "Select number of children"}</Text>
+            </TouchableOpacity>
+            <PickerModal
+              visible={showNumberOfChildrenPicker}
+              onClose={() => setShowNumberOfChildrenPicker(false)}
+              onSelect={(value) => setNumberOfChildren(value)}
+              options={generateNumberOfChildrenOptions()}
+              selectedValue={numberOfChildren}
+            />
+          </>
+        )}
+
+        <Text style={styles.label}>What is {name}'s religion?</Text>
+        <TouchableOpacity style={styles.input} onPress={() => setShowReligionPicker(true)}>
+          <Text>{religion || "Select religion"}</Text>
+        </TouchableOpacity>
+        <PickerModal
+          visible={showReligionPicker}
+          onClose={() => setShowReligionPicker(false)}
+          onSelect={(value) => setReligion(value)}
+          options={[
+            { label: "Islam", value: "Islam" },
+            { label: "Christianity", value: "Christianity" },
+            { label: "Hinduism", value: "Hinduism" },
+          ]}
+          selectedValue={religion}
+        />
+
+        {religion === "Islam" && (
+          <>
+            <Text style={styles.label}>What is their Islamic sect?</Text>
+            <TouchableOpacity style={styles.input} onPress={() => setShowIslamicSectPicker(true)}>
+              <Text>{islamicSect || "Select Islamic sect"}</Text>
+            </TouchableOpacity>
+            <PickerModal
+              visible={showIslamicSectPicker}
+              onClose={() => setShowIslamicSectPicker(false)}
+              onSelect={(value) => setIslamicSect(value)}
+              options={[
+                { label: "Sunni", value: "Sunni" },
+                { label: "Shia", value: "Shia" },
+                { label: "Other", value: "Other" },
+              ]}
+              selectedValue={islamicSect}
+            />
+            {islamicSect === "Other" && (
+              <TextInput
+                style={styles.input}
+                placeholder="Please specify"
+                value={otherSect}
+                onChangeText={setOtherSect}
               />
-            </>
-          )}
-        </>
-      )}
+            )}
+          </>
+        )}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {route.params.gender === "Female" && (
+          <>
+            <Text style={styles.label}>Does {name} cover her head?</Text>
+            <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadPicker(true)}>
+              <Text>{coverHead || "Select option"}</Text>
+            </TouchableOpacity>
+            <PickerModal
+              visible={showCoverHeadPicker}
+              onClose={() => setShowCoverHeadPicker(false)}
+              onSelect={(value) => setCoverHead(value)}
+              options={[
+                { label: "Yes", value: "Yes" },
+                { label: "No", value: "No" },
+              ]}
+              selectedValue={coverHead}
+            />
+            {coverHead === "Yes" && (
+              <>
+                <Text style={styles.label}>Please specify:</Text>
+                <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadTypePicker(true)}>
+                  <Text>{coverHeadType || "Select option"}</Text>
+                </TouchableOpacity>
+                <PickerModal
+                  visible={showCoverHeadTypePicker}
+                  onClose={() => setShowCoverHeadTypePicker(false)}
+                  onSelect={(value) => setCoverHeadType(value)}
+                  options={[
+                    { label: "With a dupatta", value: "dupatta" },
+                    { label: "With an aabaya/hijaab", value: "aabaya_hijaab" },
+                  ]}
+                  selectedValue={coverHeadType}
+                />
+              </>
+            )}
+          </>
+        )}
+
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -173,7 +209,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingTop: 100,
+    paddingHorizontal: 20,
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
   },
   title: {
     fontSize: 24,
@@ -181,14 +227,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
     color: theme.primaryDark,
-    paddingHorizontal: 20,
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
     color: theme.text,
     fontWeight: "bold",
-    paddingHorizontal: 20,
   },
   input: {
     height: 40,
@@ -199,15 +243,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     justifyContent: "center",
     backgroundColor: theme.textLight,
-    marginHorizontal: 20,
   },
   button: {
     backgroundColor: theme.primary,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
-    marginHorizontal: 20,
-    marginBottom: 20,
+    marginTop: 20,
   },
   buttonText: {
     color: theme.textLight,

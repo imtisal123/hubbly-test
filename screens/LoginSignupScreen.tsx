@@ -21,11 +21,11 @@ export default function LoginSignupScreen() {
   const navigation = useNavigation()
 
   const handleSignUp = () => {
-    navigation.navigate("ProfileCreation")
+    navigation.navigate("Placeholder")
   }
 
   const handleLogin = () => {
-    navigation.navigate("ProfileCreation")
+    navigation.navigate("Placeholder")
   }
 
   const handleFacebookLogin = () => {
@@ -65,7 +65,7 @@ export default function LoginSignupScreen() {
               <Text style={styles.buttonText}>Log In</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={[styles.button, styles.facebookButton]} onPress={handleFacebookLogin}>
+          <TouchableOpacity style={styles.facebookButton} onPress={handleFacebookLogin}>
             <Facebook color={theme.textLight} size={24} style={styles.facebookIcon} />
             <Text style={styles.buttonText}>Continue with Facebook</Text>
           </TouchableOpacity>
@@ -114,7 +114,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 10,
-    marginBottom: 20,
   },
   button: {
     flex: 1,
@@ -140,6 +139,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
+    height: 50,
+    borderRadius: 5,
+    marginTop: 20,
   },
   facebookIcon: {
     marginRight: 10,

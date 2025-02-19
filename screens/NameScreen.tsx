@@ -1,28 +1,31 @@
 "use client"
 
 import { useState } from "react"
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from "react-native"
+import { useNavigation, useRoute } from "@react-navigation/native"
 import { theme } from "../styles/theme"
 import BackButton from "../components/BackButton"
 import ProgressBar from "../components/ProgressBar"
 
-export default function NameScreen({ route }) {
-  const { relation } = route.params
-  const [name, setName] = useState("")
+const NameScreen = () => {
+  const route = useRoute()
   const navigation = useNavigation()
+  const { relation, gender } = route.params
+  const [name, setName] = useState("")
 
   const handleNext = () => {
-    if (name.trim()) {
-      navigation.navigate("ProfileDetails1", { relation, name })
+    if (name.trim() === "") {
+      Alert.alert("Error", "Please enter a name before proceeding.")
+    } else {
+      navigation.navigate("ProfileDetails1", { relation, name, gender })
     }
   }
 
   return (
     <View style={styles.container}>
       <BackButton />
-      <ProgressBar currentStep={2} totalSteps={5} />
-      <Text style={styles.title}>What is their name?</Text>
+      <ProgressBar currentStep={2} totalSteps={gender === "male" ? 11 : 10} />
+      <Text style={styles.title}>{`What is your ${relation}'s name?`}</Text>
       <TextInput style={styles.input} placeholder="Enter name" value={name} onChangeText={setName} />
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Next</Text>
@@ -36,6 +39,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.background,
     paddingTop: 100,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
@@ -45,7 +49,6 @@ const styles = StyleSheet.create({
     color: theme.primaryDark,
   },
   input: {
-    width: "100%",
     height: 40,
     borderColor: theme.border,
     borderWidth: 1,
@@ -59,6 +62,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
+    alignSelf: "center",
   },
   buttonText: {
     color: theme.textLight,
@@ -66,4 +70,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 })
+
+export default NameScreen
 

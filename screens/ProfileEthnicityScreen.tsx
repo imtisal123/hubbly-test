@@ -2,35 +2,95 @@
 
 import { useState, useEffect } from "react"
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+import { useNavigation, useRoute } from "@react-navigation/native"
 import { theme } from "../styles/theme"
 import BackButton from "../components/BackButton"
 import ProgressBar from "../components/ProgressBar"
 
 const ethnicities = [
   "Punjabi",
-  "Sindhi",
   "Pashtun",
-  "Baloch",
-  "Kashmiri",
+  "Sindhi",
   "Saraiki",
   "Muhajir",
-  "Hazara",
-  "Balti",
-  "Burusho",
-  "Kalash",
-  "Gujarati",
-  "Makrani",
+  "Baloch",
+  "Hindkowan/Hazarewal",
   "Brahui",
-  "Hindko",
-  "Shina",
-  "Khowar",
+  "Kashmiri",
+  "Pahari",
   "Chitrali",
+  "Shina",
+  "Balti",
+  "Kohistani",
+  "Torwali",
+  "Hazara",
+  "Burusho",
   "Wakhi",
-  "Hunzai",
+  "Kalash",
+  "Siddi",
+  "Uzbek",
+  "Nuristani",
+  "Pamiri",
+  "Meo",
+  "Gujjar",
+  "Rajput",
+  "Jat",
+  "Awan",
+  "Syed",
+  "Memon",
+  "Bengali",
+  "Rohingya",
+  "Makrani",
+  "Kohli",
+  "Bheel",
+  "Marwari",
+  "Lohar",
+  "Gondal",
+  "Khosa",
+  "Leghari",
+  "Marri",
+  "Bugti",
+  "Mazari",
+  "Afridi",
+  "Yousafzai",
+  "Khattak",
+  "Wazir",
+  "Mahsud",
+  "Shinwari",
+  "Turi",
+  "Bangash",
+  "Orakzai",
+  "Kakar",
+  "Luni",
+  "Achakzai",
+  "Zarkun",
+  "Mengal",
+  "Zehri",
+  "Rind",
+  "Domki",
+  "Jamali",
+  "Lashari",
+  "Gichki",
+  "Bizenjo",
+  "Magsi",
+  "Jatoi",
+  "Talpur",
+  "Chandio",
+  "Bhutto",
+  "Soomro",
+  "Junejo",
+  "Maher",
+  "Abbasi",
+  "Khan",
+  "Malik",
+  "Sheikh",
+  "Qureshi",
+  "Ansari",
+  "Chaudhry",
 ]
 
-export default function ProfileEthnicityScreen({ route }) {
+export default function ProfileEthnicityScreen() {
+  const route = useRoute()
   const { name, dateOfBirth: dateOfBirthString } = route.params
   const dateOfBirth = new Date(dateOfBirthString) // Convert string back to Date object if needed
   const [ethnicity, setEthnicity] = useState("")
@@ -47,18 +107,16 @@ export default function ProfileEthnicityScreen({ route }) {
   }, [ethnicity])
 
   const handleSubmit = () => {
-    console.log("Profile details:", {
+    navigation.navigate("Education", {
       ...route.params,
       ethnicity,
-      dateOfBirth: dateOfBirthString, // Keep it as a string when logging or sending to API
     })
-    // Navigate to the next screen or finish the profile creation process
   }
 
   return (
     <View style={styles.container}>
       <BackButton />
-      <ProgressBar currentStep={5} totalSteps={5} />
+      <ProgressBar currentStep={5} totalSteps={6} />
       <Text style={styles.title}>What is {name}'s ethnicity?</Text>
       <TextInput
         style={styles.input}
@@ -79,7 +137,7 @@ export default function ProfileEthnicityScreen({ route }) {
         />
       )}
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
+        <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
     </View>
   )
@@ -90,7 +148,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.background,
     padding: 20,
-    paddingTop: 100, // Add this line
+    paddingTop: 100,
   },
   title: {
     fontSize: 24,

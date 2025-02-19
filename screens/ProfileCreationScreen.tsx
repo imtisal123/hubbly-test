@@ -1,20 +1,23 @@
 "use client"
 
 import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
-import PickerModal from "../components/PickerModal"
-import ProgressBar from "../components/ProgressBar"
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native"
 import { useNavigation } from "@react-navigation/native"
 import { theme } from "../styles/theme"
 import BackButton from "../components/BackButton"
+import ProgressBar from "../components/ProgressBar"
+import PickerModal from "../components/PickerModal"
 
-export default function ProfileCreationScreen() {
+const ProfileCreationScreen = () => {
   const [relation, setRelation] = useState("")
-  const [otherRelation, setOtherRelation] = useState("")
   const [showPicker, setShowPicker] = useState(false)
   const navigation = useNavigation()
 
   const handleNext = () => {
+    if (!relation) {
+      Alert.alert("Error", "Please select a relation")
+      return
+    }
     const gender = relation === "Daughter" || relation === "Sister" ? "female" : "male"
     navigation.navigate("Name", { relation, gender })
   }
@@ -22,10 +25,10 @@ export default function ProfileCreationScreen() {
   return (
     <View style={styles.container}>
       <BackButton />
-      <ProgressBar currentStep={1} totalSteps={5} />
+      <ProgressBar currentStep={1} totalSteps={10} />
       <Text style={styles.title}>Who are you creating this profile for?</Text>
-      <TouchableOpacity style={styles.input} onPress={() => setShowPicker(true)}>
-        <Text>{relation || "Select relation"}</Text>
+      <TouchableOpacity style={styles.pickerButton} onPress={() => setShowPicker(true)}>
+        <Text style={styles.pickerButtonText}>{relation || "Select relation"}</Text>
       </TouchableOpacity>
       <PickerModal
         visible={showPicker}
@@ -34,12 +37,11 @@ export default function ProfileCreationScreen() {
         options={[
           { label: "Daughter", value: "Daughter" },
           { label: "Son", value: "Son" },
-          { label: "Brother", value: "Brother" },
           { label: "Sister", value: "Sister" },
+          { label: "Brother", value: "Brother" },
         ]}
         selectedValue={relation}
       />
-
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
@@ -52,6 +54,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.background,
     paddingTop: 100,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
@@ -59,26 +62,29 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
     color: theme.primaryDark,
-    paddingHorizontal: 20,
   },
-  input: {
-    width: "100%",
-    height: 40,
+  pickerButton: {
+    backgroundColor: theme.textLight,
     borderColor: theme.border,
     borderWidth: 1,
     borderRadius: 5,
+    padding: 10,
     marginBottom: 20,
-    paddingHorizontal: 10,
-    justifyContent: "center",
-    backgroundColor: theme.textLight,
-    marginHorizontal: 20,
+    alignSelf: "center",
+    width: "80%",
+  },
+  pickerButtonText: {
+    fontSize: 16,
+    color: theme.text,
+    textAlign: "center",
   },
   button: {
     backgroundColor: theme.primary,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
-    marginHorizontal: 20,
+    alignSelf: "center",
+    width: "80%",
   },
   buttonText: {
     color: theme.textLight,
@@ -87,4 +93,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 })
+
+export default ProfileCreationScreen
 
