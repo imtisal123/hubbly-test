@@ -91,7 +91,7 @@ const ethnicities = [
 
 export default function ProfileEthnicityScreen() {
   const route = useRoute()
-  const { name, dateOfBirth: dateOfBirthString } = route.params
+  const { name, dateOfBirth: dateOfBirthString, gender } = route.params
   const dateOfBirth = new Date(dateOfBirthString) // Convert string back to Date object if needed
   const [ethnicity, setEthnicity] = useState("")
   const [filteredEthnicities, setFilteredEthnicities] = useState([])
@@ -116,7 +116,7 @@ export default function ProfileEthnicityScreen() {
   return (
     <View style={styles.container}>
       <BackButton />
-      <ProgressBar currentStep={5} totalSteps={6} />
+      <ProgressBar currentStep={5} totalSteps={gender === "male" ? 11 : 10} />
       <Text style={styles.title}>What is {name}'s ethnicity?</Text>
       <TextInput
         style={styles.input}

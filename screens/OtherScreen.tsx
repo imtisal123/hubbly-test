@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native"
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native"
 import { useNavigation, useRoute } from "@react-navigation/native"
 import { theme } from "../styles/theme"
 import BackButton from "../components/BackButton"
@@ -22,27 +22,32 @@ export default function OtherScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <BackButton />
-      <ProgressBar currentStep={gender === "male" ? 10 : 9} totalSteps={gender === "male" ? 11 : 10} />
-      <Text style={styles.title}>Additional Information</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProgressBar
+          currentStep={gender.toLowerCase() === "male" ? 10 : 9}
+          totalSteps={gender.toLowerCase() === "male" ? 11 : 10}
+        />
+        <Text style={styles.title}>Additional Information</Text>
 
-      <Text style={styles.label}>
-        Is there anything else you would like to share about {name} e.g. Hobbies/Interests:
-      </Text>
-      <TextInput
-        style={styles.textArea}
-        value={additionalInfo}
-        onChangeText={setAdditionalInfo}
-        placeholder="Enter additional information"
-        multiline
-        numberOfLines={4}
-      />
+        <Text style={styles.label}>
+          Is there anything else you would like to share about {name} e.g. Hobbies/Interests:
+        </Text>
+        <TextInput
+          style={styles.textArea}
+          value={additionalInfo}
+          onChangeText={setAdditionalInfo}
+          placeholder="Enter additional information"
+          multiline
+          numberOfLines={4}
+        />
 
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <TouchableOpacity style={styles.button} onPress={handleNext}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -50,7 +55,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
+  },
+  scrollContent: {
     paddingTop: 100,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,

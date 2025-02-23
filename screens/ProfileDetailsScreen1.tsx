@@ -100,7 +100,7 @@ export default function ProfileDetailsScreen1() {
     <View style={styles.container}>
       <BackButton style={styles.backButton} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProgressBar currentStep={3} totalSteps={10} />
+        <ProgressBar currentStep={3} totalSteps={gender.toLowerCase() === "male" ? 11 : 10} />
         <Text style={styles.title}>Profile Details for {name}</Text>
 
         <Text style={styles.label}>Date of Birth</Text>
@@ -149,8 +149,8 @@ export default function ProfileDetailsScreen1() {
           onClose={() => setShowGenderPicker(false)}
           onSelect={(value) => setGender(value.charAt(0).toUpperCase() + value.slice(1))}
           options={[
-            { label: "Male", value: "male" },
-            { label: "Female", value: "female" },
+            { label: "Male", value: "Male" },
+            { label: "Female", value: "Female" },
           ]}
           selectedValue={gender}
         />

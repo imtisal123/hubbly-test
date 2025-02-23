@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from "react-native"
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView } from "react-native"
 import { useNavigation, useRoute } from "@react-navigation/native"
 import { theme } from "../styles/theme"
 import BackButton from "../components/BackButton"
@@ -31,7 +31,7 @@ export default function ProfilePicScreen() {
   }
 
   const handleNext = () => {
-    if (gender === "male" && !image) {
+    if (gender.toLowerCase() === "male" && !image) {
       Alert.alert("Error", "Please upload at least one picture")
       return
     }
@@ -45,40 +45,45 @@ export default function ProfilePicScreen() {
   return (
     <View style={styles.container}>
       <BackButton />
-      <ProgressBar currentStep={gender === "male" ? 11 : 10} totalSteps={gender === "male" ? 11 : 10} />
-      <Text style={styles.title}>Profile Picture{gender === "female" ? " (Optional)" : ""}</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProgressBar
+          currentStep={gender.toLowerCase() === "male" ? 11 : 10}
+          totalSteps={gender.toLowerCase() === "male" ? 11 : 10}
+        />
+        <Text style={styles.title}>Profile Picture{gender.toLowerCase() === "female" ? " (Optional)" : ""}</Text>
 
-      <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
-        {image ? <Image source={{ uri: image }} style={styles.image} /> : <Camera size={50} color={theme.primary} />}
-      </TouchableOpacity>
-      <Text style={styles.uploadText}>{image ? "Tap to change picture" : "Tap to upload picture"}</Text>
+        <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+          {image ? <Image source={{ uri: image }} style={styles.image} /> : <Camera size={50} color={theme.primary} />}
+        </TouchableOpacity>
+        <Text style={styles.uploadText}>{image ? "Tap to change picture" : "Tap to upload picture"}</Text>
 
-      {gender === "male" && <Text style={styles.mandatoryText}>Minimum 1 picture required</Text>}
+        {gender.toLowerCase() === "male" && <Text style={styles.mandatoryText}>Minimum 1 picture required</Text>}
 
-      {gender === "female" && (
-        <View>
-          <Text style={styles.privacyText}>
-            We handle all pictures with utmost privacy and they will not be shared with anyone without permission.
-          </Text>
-          <View style={styles.checkboxContainer}>
-            <TouchableOpacity
-              style={[styles.checkbox, showOnlyToMatches && styles.checkboxChecked]}
-              onPress={() => setShowOnlyToMatches(!showOnlyToMatches)}
-            >
-              {showOnlyToMatches && (
-                <View style={styles.checkmark}>
-                  <Text style={styles.checkmarkText}>✓</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-            <Text style={styles.checkboxLabel}>Only show {name}'s picture to profiles I match with</Text>
+        {gender.toLowerCase() === "female" && (
+          <View>
+            <Text style={styles.privacyText}>
+              We handle all pictures with utmost privacy and they will not be shared with anyone without permission.
+            </Text>
+            <View style={styles.checkboxContainer}>
+              <TouchableOpacity
+                style={[styles.checkbox, showOnlyToMatches && styles.checkboxChecked]}
+                onPress={() => setShowOnlyToMatches(!showOnlyToMatches)}
+              >
+                {showOnlyToMatches && (
+                  <View style={styles.checkmark}>
+                    <Text style={styles.checkmarkText}>✓</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+              <Text style={styles.checkboxLabel}>Only show {name}'s picture to profiles I match with</Text>
+            </View>
           </View>
-        </View>
-      )}
+        )}
 
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>{gender === "female" && !image ? "Skip" : "Next"}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleNext}>
+          <Text style={styles.buttonText}>{gender.toLowerCase() === "female" && !image ? "Skip" : "Next"}</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   )
 }
@@ -87,6 +92,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
+  },
+  scrollContent: {
     paddingTop: 100,
     paddingHorizontal: 20,
   },

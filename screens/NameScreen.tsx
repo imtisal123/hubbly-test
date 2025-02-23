@@ -24,7 +24,7 @@ const NameScreen = () => {
   return (
     <View style={styles.container}>
       <BackButton />
-      <ProgressBar currentStep={2} totalSteps={gender === "male" ? 11 : 10} />
+      <ProgressBar currentStep={2} totalSteps={gender.toLowerCase() === "male" ? 11 : 10} />
       <Text style={styles.title}>{`What is your ${relation}'s name?`}</Text>
       <TextInput style={styles.input} placeholder="Enter name" value={name} onChangeText={setName} />
       <TouchableOpacity style={styles.button} onPress={handleNext}>

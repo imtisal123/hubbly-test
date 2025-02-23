@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native"
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native"
 import { useNavigation, useRoute } from "@react-navigation/native"
 import { theme } from "../styles/theme"
 import BackButton from "../components/BackButton"
@@ -27,45 +27,47 @@ export default function HomeScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <BackButton />
-      <ProgressBar currentStep={9} totalSteps={10} />
-      <Text style={styles.title}>Home Details for {name}</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProgressBar currentStep={9} totalSteps={11} />
+        <Text style={styles.title}>Home Details for {name}</Text>
 
-      <Text style={styles.label}>What is {name}'s living arrangement?</Text>
-      <TouchableOpacity style={styles.input} onPress={() => setShowLivingArrangementPicker(true)}>
-        <Text>{livingArrangement || "Select living arrangement"}</Text>
-      </TouchableOpacity>
-      <PickerModal
-        visible={showLivingArrangementPicker}
-        onClose={() => setShowLivingArrangementPicker(false)}
-        onSelect={(value) => setLivingArrangement(value)}
-        options={[
-          { label: "Joint family system", value: "Joint family system" },
-          { label: "Will be living separately from extended family", value: "Separate from extended family" },
-        ]}
-        selectedValue={livingArrangement}
-      />
+        <Text style={styles.label}>What is {name}'s living arrangement?</Text>
+        <TouchableOpacity style={styles.input} onPress={() => setShowLivingArrangementPicker(true)}>
+          <Text>{livingArrangement || "Select living arrangement"}</Text>
+        </TouchableOpacity>
+        <PickerModal
+          visible={showLivingArrangementPicker}
+          onClose={() => setShowLivingArrangementPicker(false)}
+          onSelect={(value) => setLivingArrangement(value)}
+          options={[
+            { label: "Joint family system", value: "Joint family system" },
+            { label: "Will be living separately from extended family", value: "Separate from extended family" },
+          ]}
+          selectedValue={livingArrangement}
+        />
 
-      <Text style={styles.label}>What is {name}'s home ownership status?</Text>
-      <TouchableOpacity style={styles.input} onPress={() => setShowHomeOwnershipPicker(true)}>
-        <Text>{homeOwnership || "Select home ownership status"}</Text>
-      </TouchableOpacity>
-      <PickerModal
-        visible={showHomeOwnershipPicker}
-        onClose={() => setShowHomeOwnershipPicker(false)}
-        onSelect={(value) => setHomeOwnership(value)}
-        options={[
-          { label: "Rent", value: "Rent" },
-          { label: "Own", value: "Own" },
-        ]}
-        selectedValue={homeOwnership}
-      />
+        <Text style={styles.label}>What is {name}'s home ownership status?</Text>
+        <TouchableOpacity style={styles.input} onPress={() => setShowHomeOwnershipPicker(true)}>
+          <Text>{homeOwnership || "Select home ownership status"}</Text>
+        </TouchableOpacity>
+        <PickerModal
+          visible={showHomeOwnershipPicker}
+          onClose={() => setShowHomeOwnershipPicker(false)}
+          onSelect={(value) => setHomeOwnership(value)}
+          options={[
+            { label: "Rent", value: "Rent" },
+            { label: "Own", value: "Own" },
+          ]}
+          selectedValue={homeOwnership}
+        />
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -73,7 +75,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
+  },
+  scrollContent: {
     paddingTop: 100,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
