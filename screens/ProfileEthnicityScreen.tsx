@@ -107,7 +107,7 @@ export default function ProfileEthnicityScreen() {
   }, [ethnicity])
 
   const handleSubmit = () => {
-    navigation.navigate("Education", {
+    navigation.navigate("Location", {
       ...route.params,
       ethnicity,
     })
@@ -116,7 +116,7 @@ export default function ProfileEthnicityScreen() {
   return (
     <View style={styles.container}>
       <BackButton />
-      <ProgressBar currentStep={5} totalSteps={gender === "male" ? 11 : 10} />
+      <ProgressBar currentStep={5} totalSteps={13} />
       <Text style={styles.title}>What is {name}'s ethnicity?</Text>
       <TextInput
         style={styles.input}

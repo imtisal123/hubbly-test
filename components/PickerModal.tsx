@@ -1,6 +1,8 @@
 import type React from "react"
-import { View, Text, Modal, TouchableOpacity, FlatList, StyleSheet } from "react-native"
+import { View, Text, Modal, TouchableOpacity, FlatList, StyleSheet, Dimensions } from "react-native"
 import { theme } from "../styles/theme"
+
+const { width } = Dimensions.get("window")
 
 interface PickerModalProps {
   visible: boolean
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: theme.background,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingTop: 20,
@@ -55,22 +57,24 @@ const styles = StyleSheet.create({
   option: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: theme.border,
   },
   selectedOption: {
-    backgroundColor: "#e6e6e6",
+    backgroundColor: theme.primary,
   },
   optionText: {
     fontSize: 18,
+    color: theme.text,
   },
   closeButton: {
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: theme.textLight,
   },
   closeButtonText: {
     fontSize: 18,
-    color: "#007AFF",
+    color: theme.primary,
+    fontWeight: "bold",
   },
 })
 

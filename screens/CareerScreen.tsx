@@ -42,7 +42,7 @@ export default function CareerScreen() {
     <View style={styles.container}>
       <BackButton />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProgressBar currentStep={8} totalSteps={gender.toLowerCase() === "male" ? 11 : 10} />
+        <ProgressBar currentStep={9} totalSteps={13} />
         <Text style={styles.title}>Career Details for {name}</Text>
         {/* Debug information */}
         {/* <Text style={styles.debugText}>Gender: {gender}, Is male? {gender.toLowerCase() === "male" ? "Yes" : "No"}</Text> */}

@@ -18,7 +18,7 @@ export default function EducationScreen() {
   const [showEducationLevelPicker, setShowEducationLevelPicker] = useState(false)
 
   const handleNext = () => {
-    navigation.navigate("Location", {
+    navigation.navigate("Career", {
       ...route.params,
       educationLevel,
       university,
@@ -29,7 +29,7 @@ export default function EducationScreen() {
     <View style={styles.container}>
       <BackButton />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProgressBar currentStep={6} totalSteps={gender.toLowerCase() === "male" ? 11 : 10} />
+        <ProgressBar currentStep={8} totalSteps={13} />
         <Text style={styles.title}>Education Details for {name}</Text>
 
         <Text style={styles.label}>{`What is ${name}'s highest Education Level?`}</Text>
@@ -58,6 +58,7 @@ export default function EducationScreen() {
           value={university}
           onChangeText={setUniversity}
           placeholder="Enter university name"
+          placeholderTextColor={theme.textLight}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleNext}>

@@ -37,9 +37,11 @@ export default function ProfilePicScreen() {
     }
     // Here you would typically upload the image to your server
     // and then navigate to the next screen or complete the profile creation
-    Alert.alert("Success", "Profile picture uploaded successfully", [
-      { text: "OK", onPress: () => navigation.navigate("LoginSignup") },
-    ])
+    navigation.navigate("Congrats1", {
+      ...route.params,
+      profilePicture: image,
+      showOnlyToMatches,
+    })
   }
 
   return (

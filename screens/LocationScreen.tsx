@@ -13,23 +13,18 @@ export default function LocationScreen() {
   const route = useRoute()
   const { name, gender } = route.params
 
-  const [nationality, setNationality] = useState("")
   const [homeTown, setHomeTown] = useState("")
   const [currentCity, setCurrentCity] = useState("")
-  const [isPRHolder, setIsPRHolder] = useState("")
   const [openToMovingCity, setOpenToMovingCity] = useState("")
   const [openToMovingCountry, setOpenToMovingCountry] = useState("")
-  const [showPRPicker, setShowPRPicker] = useState(false)
   const [showMovingCityPicker, setShowMovingCityPicker] = useState(false)
   const [showMovingCountryPicker, setShowMovingCountryPicker] = useState(false)
 
   const handleNext = () => {
-    navigation.navigate("Career", {
+    navigation.navigate("Nationality", {
       ...route.params,
-      nationality,
       homeTown,
       currentCity,
-      isPRHolder,
       openToMovingCity,
       openToMovingCountry,
     })
@@ -39,16 +34,8 @@ export default function LocationScreen() {
     <View style={styles.container}>
       <BackButton />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProgressBar currentStep={7} totalSteps={gender.toLowerCase() === "male" ? 11 : 10} />
+        <ProgressBar currentStep={6} totalSteps={13} />
         <Text style={styles.title}>Location Details for {name}</Text>
-
-        <Text style={styles.label}>Nationality</Text>
-        <TextInput
-          style={styles.input}
-          value={nationality}
-          onChangeText={setNationality}
-          placeholder="Enter nationality"
-        />
 
         <Text style={styles.label}>Home town (Where {name} grew up)</Text>
         <TextInput
@@ -66,21 +53,6 @@ export default function LocationScreen() {
           onChangeText={setCurrentCity}
           placeholder={`Where does ${name} currently live?`}
           placeholderTextColor={theme.textLight}
-        />
-
-        <Text style={styles.label}>PR/Greencard holder</Text>
-        <TouchableOpacity style={styles.input} onPress={() => setShowPRPicker(true)}>
-          <Text>{isPRHolder || "Select option"}</Text>
-        </TouchableOpacity>
-        <PickerModal
-          visible={showPRPicker}
-          onClose={() => setShowPRPicker(false)}
-          onSelect={(value) => setIsPRHolder(value)}
-          options={[
-            { label: "Yes", value: "Yes" },
-            { label: "No", value: "No" },
-          ]}
-          selectedValue={isPRHolder}
         />
 
         <Text style={styles.label}>Open to moving city after marriage?</Text>
@@ -136,14 +108,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
     color: theme.primaryDark,
-    paddingHorizontal: 20,
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
     color: theme.text,
     fontWeight: "bold",
-    paddingHorizontal: 20,
   },
   input: {
     height: 40,
@@ -154,14 +124,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     justifyContent: "center",
     backgroundColor: theme.textLight,
-    marginHorizontal: 20,
   },
   button: {
     backgroundColor: theme.primary,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
-    marginHorizontal: 20,
     marginBottom: 20,
   },
   buttonText: {

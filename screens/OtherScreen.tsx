@@ -15,7 +15,7 @@ export default function OtherScreen() {
   const [additionalInfo, setAdditionalInfo] = useState("")
 
   const handleNext = () => {
-    navigation.navigate("ProfilePic", {
+    navigation.navigate("Congrats1", {
       ...route.params,
       additionalInfo,
     })
@@ -25,10 +25,7 @@ export default function OtherScreen() {
     <View style={styles.container}>
       <BackButton />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProgressBar
-          currentStep={gender.toLowerCase() === "male" ? 10 : 9}
-          totalSteps={gender.toLowerCase() === "male" ? 11 : 10}
-        />
+        <ProgressBar currentStep={gender === "male" ? 10 : 9} totalSteps={gender === "male" ? 11 : 10} />
         <Text style={styles.title}>Additional Information</Text>
 
         <Text style={styles.label}>
