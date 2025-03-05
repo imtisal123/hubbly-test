@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
-import PickerModal from "../components/PickerModal"
+import { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+import PickerModal from "../components/PickerModal";
+
+
 
 export default function NationalityScreen() {
   const navigation = useNavigation()
@@ -30,11 +32,15 @@ export default function NationalityScreen() {
       isPRHolder,
       prCountry,
     })
-  }
+  };
+    
 
-  return (
+
+
+  
+return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton style={styles.backButton} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <ProgressBar currentStep={7} totalSteps={13} />
         <Text style={styles.title}>Nationality Details for {name}</Text>
@@ -113,6 +119,12 @@ export default function NationalityScreen() {
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
@@ -120,6 +132,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 100,
     paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -146,16 +159,16 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: theme.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
-    marginBottom: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
-    fontSize: 16,
+    color: "white",
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
   },
 })
-

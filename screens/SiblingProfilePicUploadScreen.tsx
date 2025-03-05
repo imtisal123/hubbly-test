@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import * as ImagePicker from "expo-image-picker"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
+import { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
 
 const SiblingProfilePicUploadScreen = () => {
   const navigation = useNavigation()
@@ -42,28 +42,42 @@ const SiblingProfilePicUploadScreen = () => {
     } else {
       navigation.navigate("Congrats3", updatedParams)
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
-      <BackButton />
-      <ProgressBar currentStep={currentSibling * 3} totalSteps={totalSiblings * 3 + 1} />
-      <Text style={styles.title}>{`${name}'s ${
-        currentSibling <= sisters ? "Sister" : "Brother"
-      }'s Profile Picture (${currentSibling}/${totalSiblings})`}</Text>
-      <Text style={styles.subtitle}>(Optional)</Text>
+      <BackButton style={styles.backButton} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProgressBar currentStep={currentSibling * 3} totalSteps={totalSiblings * 3 + 1} />
+        <Text style={styles.title}>{`${name}'s ${
+          currentSibling <= sisters ? "Sister" : "Brother"
+        } Photo (${currentSibling}/${totalSiblings})`}</Text>
 
-      <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.image} />
-        ) : (
-          <Text style={styles.uploadButtonText}>Upload Picture</Text>
-        )}
-      </TouchableOpacity>
+        <View style={styles.imageContainer}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.image} />
+          ) : (
+            <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+              <Text style={styles.uploadButtonText}>Upload Photo</Text>
+            </TouchableOpacity>
+          )}
 
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>{image ? "Next" : "Skip"}</Text>
-      </TouchableOpacity>
+          {image && (
+            <TouchableOpacity style={styles.changePhotoButton} onPress={pickImage}>
+              <Text style={styles.changePhotoText}>Change Photo</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleNext}
+        >
+          <Text style={styles.buttonText}>
+            {currentSibling < totalSiblings ? "Next Sibling" : "Continue"}
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   )
 }
@@ -72,8 +86,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 20,
-    alignItems: "center",
+  },
+  scrollContent: {
+    paddingTop: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
   },
   title: {
     fontSize: 24,
@@ -105,20 +128,33 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 100,
   },
+  imageContainer: {
+    alignItems: "center",
+    marginVertical: 20,
+  },
   button: {
     backgroundColor: theme.primary,
-    paddingVertical: 12,
+    paddingVertical: 15,
     paddingHorizontal: 30,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 20,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
+    color: "white",
     fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  changePhotoButton: {
+    marginTop: 15,
+    padding: 10,
+  },
+  changePhotoText: {
+    color: theme.primary,
+    fontSize: 16,
     fontWeight: "bold",
   },
 })
 
 export default SiblingProfilePicUploadScreen
-

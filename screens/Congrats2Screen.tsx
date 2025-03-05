@@ -1,41 +1,53 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import { Feather } from "@expo/vector-icons"
+import { View, Text, StyleSheet, TouchableOpacity , ScrollView} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import BackButton from "../components/BackButton";
+import { theme } from "../styles/theme";
+import { Feather } from "@expo/vector-icons";
+
+
 
 const Congrats2Screen = () => {
   const navigation = useNavigation()
   const route = useRoute()
   const { name } = route.params
-
+    
   return (
     <View style={styles.container}>
-      <Text style={styles.congratsText}>🎉 Congratulations on completing {name}'s parent's profile! 🎊</Text>
-      <Text style={styles.instructionText}>Now please fill in a few more questions about {name}'s siblings.</Text>
-      <View style={styles.iconContainer}>
-        <Feather name="award" size={50} color={theme.primary} />
-        <Feather name="smile" size={50} color={theme.primary} />
-        <Feather name="star" size={50} color={theme.primary} />
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-          <Text style={styles.buttonText}>Back</Text>
+      <BackButton style={styles.backButton} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Text style={styles.congratsText}>🎉 Congratulations on completing {name}'s parent's profile! 🎊</Text>
+        <Text style={styles.instructionText}>Now please fill in a few more questions about {name}'s siblings.</Text>
+        <View style={styles.iconContainer}>
+          <Feather name="award" size={50} color={theme.primary} />
+          <Feather name="smile" size={50} color={theme.primary} />
+          <Feather name="star" size={50} color={theme.primary} />
+        </View>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={() => navigation.navigate("SiblingCount", route.params)}
+        >
+          <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("SiblingCount", { name })}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: theme.background,
-    padding: 20,
+  },
+  scrollContent: {
+    paddingTop: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   congratsText: {
     fontSize: 28,
@@ -52,26 +64,22 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 30,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
+    justifyContent: "space-around",
+    marginBottom: 40,
   },
   button: {
     backgroundColor: theme.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 20,
   },
   buttonText: {
-    color: theme.textLight,
-    fontSize: 16,
+    color: "white",
+    fontSize: 18,
     fontWeight: "bold",
   },
 })
 
 export default Congrats2Screen
-

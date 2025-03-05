@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
-import PickerModal from "../components/PickerModal"
+import { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+import PickerModal from "../components/PickerModal";
+
+
 
 export default function LocationScreen() {
   const navigation = useNavigation()
@@ -15,6 +17,8 @@ export default function LocationScreen() {
 
   const [homeTown, setHomeTown] = useState("")
   const [currentCity, setCurrentCity] = useState("")
+  const [city, setCity] = useState("")
+  const [area, setArea] = useState("")
   const [openToMovingCity, setOpenToMovingCity] = useState("")
   const [openToMovingCountry, setOpenToMovingCountry] = useState("")
   const [showMovingCityPicker, setShowMovingCityPicker] = useState(false)
@@ -25,66 +29,40 @@ export default function LocationScreen() {
       ...route.params,
       homeTown,
       currentCity,
+      city,
+      area,
       openToMovingCity,
       openToMovingCountry,
     })
-  }
+  };
+    
 
-  return (
+
+  
+  
+return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton style={styles.backButton} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProgressBar currentStep={6} totalSteps={13} />
-        <Text style={styles.title}>Location Details for {name}</Text>
-
-        <Text style={styles.label}>Home town (Where {name} grew up)</Text>
+        <ProgressBar currentStep={3} totalSteps={7} />
+        <Text style={styles.title}>Location Details</Text>
+        
+        <Text style={styles.label}>City</Text>
         <TextInput
           style={styles.input}
-          value={homeTown}
-          onChangeText={setHomeTown}
-          placeholder={`Enter home town`}
-          placeholderTextColor={theme.textLight}
+          value={city}
+          onChangeText={setCity}
+          placeholder="Enter city"
         />
-
-        <Text style={styles.label}>Current city of residence</Text>
+        
+        <Text style={styles.label}>Area</Text>
         <TextInput
           style={styles.input}
-          value={currentCity}
-          onChangeText={setCurrentCity}
-          placeholder={`Where does ${name} currently live?`}
-          placeholderTextColor={theme.textLight}
+          value={area}
+          onChangeText={setArea}
+          placeholder="Enter area"
         />
-
-        <Text style={styles.label}>Open to moving city after marriage?</Text>
-        <TouchableOpacity style={styles.input} onPress={() => setShowMovingCityPicker(true)}>
-          <Text>{openToMovingCity || "Select option"}</Text>
-        </TouchableOpacity>
-        <PickerModal
-          visible={showMovingCityPicker}
-          onClose={() => setShowMovingCityPicker(false)}
-          onSelect={(value) => setOpenToMovingCity(value)}
-          options={[
-            { label: "Yes", value: "Yes" },
-            { label: "No", value: "No" },
-          ]}
-          selectedValue={openToMovingCity}
-        />
-
-        <Text style={styles.label}>Open to moving country after marriage?</Text>
-        <TouchableOpacity style={styles.input} onPress={() => setShowMovingCountryPicker(true)}>
-          <Text>{openToMovingCountry || "Select option"}</Text>
-        </TouchableOpacity>
-        <PickerModal
-          visible={showMovingCountryPicker}
-          onClose={() => setShowMovingCountryPicker(false)}
-          onSelect={(value) => setOpenToMovingCountry(value)}
-          options={[
-            { label: "Yes", value: "Yes" },
-            { label: "No", value: "No" },
-          ]}
-          selectedValue={openToMovingCountry}
-        />
-
+        
         <TouchableOpacity style={styles.button} onPress={handleNext}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
@@ -94,6 +72,12 @@ export default function LocationScreen() {
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
@@ -101,6 +85,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 100,
     paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -127,16 +112,16 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: theme.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
-    marginBottom: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
-    fontSize: 16,
+    color: "white",
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
   },
 })
-

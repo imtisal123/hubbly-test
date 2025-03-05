@@ -1,14 +1,14 @@
 "use client"
 
-import { useState } from "react"
-import { Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native"
-import PickerModal from "../components/PickerModal"
-import ProgressBar from "../components/ProgressBar"
-import { theme } from "../styles/theme"
-import { useNavigation } from "@react-navigation/native"
-import BackButton from "../components/BackButton"
+import { useState } from "react";
+import { Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native";
+import PickerModal from "../components/PickerModal";
+import ProgressBar from "../components/ProgressBar";
+import { theme } from "../styles/theme";
+import { useNavigation } from "@react-navigation/native";
+import BackButton from "../components/BackButton";
 
-export default function ProfileDetailsScreen2({ route }) {
+function ProfileDetailsScreen2({ route }) {
   const navigation = useNavigation()
   const { name, dateOfBirth: dateOfBirthString } = route.params
   const dateOfBirth = new Date(dateOfBirthString) // Convert string back to Date object if needed
@@ -38,11 +38,15 @@ export default function ProfileDetailsScreen2({ route }) {
       coverHead,
       coverHeadType,
     })
-  }
+  };
+    
 
-  return (
-    <ScrollView style={styles.container}>
-      <BackButton />
+
+
+  
+return (
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+      <BackButton style={styles.backButton} />
       <ProgressBar currentStep={4} totalSteps={5} />
       <Text style={styles.title}>More about {name}</Text>
 
@@ -126,7 +130,7 @@ export default function ProfileDetailsScreen2({ route }) {
       )}
 
       {route.params.gender === "female" && (
-        <>
+        <React.Fragment>
           <Text style={styles.label}>Does {name} cover her head?</Text>
           <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadPicker(true)}>
             <Text>{coverHead || "Select option"}</Text>
@@ -142,7 +146,7 @@ export default function ProfileDetailsScreen2({ route }) {
             selectedValue={coverHead}
           />
           {coverHead === "yes" && (
-            <>
+            <React.Fragment>
               <Text style={styles.label}>Please specify:</Text>
               <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadTypePicker(true)}>
                 <Text>{coverHeadType || "Select option"}</Text>
@@ -157,9 +161,9 @@ export default function ProfileDetailsScreen2({ route }) {
                 ]}
                 selectedValue={coverHeadType}
               />
-            </>
+            </React.Fragment>
           )}
-        </>
+        </React.Fragment>
       )}
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -170,10 +174,20 @@ export default function ProfileDetailsScreen2({ route }) {
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
+  },
+  scrollContent: {
     paddingTop: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -203,17 +217,18 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: theme.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
-    marginHorizontal: 20,
-    marginBottom: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
-    fontSize: 16,
+    color: "white",
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
   },
 })
 
+export default ProfileDetailsScreen2;

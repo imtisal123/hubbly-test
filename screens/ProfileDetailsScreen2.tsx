@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, TextInput } from "react-native"
 import { useNavigation, useRoute } from "@react-navigation/native"
 import PickerModal from "../components/PickerModal"
@@ -93,7 +93,7 @@ export default function ProfileDetailsScreen2() {
         />
 
         {(maritalStatus === "Divorced" || maritalStatus === "Widowed") && (
-          <>
+          <React.Fragment>
             <Text style={styles.label}>Does {name} have any children?</Text>
             <TouchableOpacity style={styles.input} onPress={() => setShowChildrenPicker(true)}>
               <Text>{hasChildren || "Select option"}</Text>
@@ -101,19 +101,18 @@ export default function ProfileDetailsScreen2() {
             <PickerModal
               visible={showChildrenPicker}
               onClose={() => setShowChildrenPicker(false)}
-              onSelect={(value) => setHasChildren(value.charAt(0).toUpperCase() + value.slice(1))}
+              onSelect={(value) => setHasChildren(value)}
               options={[
-                { label: "Yes", value: "yes" },
-                { label: "No", value: "no" },
+                { label: "Yes", value: "Yes" },
+                { label: "No", value: "No" },
               ]}
               selectedValue={hasChildren}
             />
-
             {hasChildren === "Yes" && (
-              <>
-                <Text style={styles.label}>How many children does {name} have?</Text>
+              <React.Fragment>
+                <Text style={styles.label}>How many children?</Text>
                 <TouchableOpacity style={styles.input} onPress={() => setShowNumberOfChildrenPicker(true)}>
-                  <Text>{numberOfChildren || "Select number of children"}</Text>
+                  <Text>{numberOfChildren || "Select number"}</Text>
                 </TouchableOpacity>
                 <PickerModal
                   visible={showNumberOfChildrenPicker}
@@ -122,9 +121,9 @@ export default function ProfileDetailsScreen2() {
                   options={generateNumberOfChildrenOptions()}
                   selectedValue={numberOfChildren}
                 />
-              </>
+              </React.Fragment>
             )}
-          </>
+          </React.Fragment>
         )}
 
         <Text style={styles.label}>What is {name}'s religion?</Text>
@@ -148,7 +147,7 @@ export default function ProfileDetailsScreen2() {
         />
 
         {religion === "Islam" && (
-          <>
+          <React.Fragment>
             <Text style={styles.label}>What is {name}'s Islamic sect?</Text>
             <TouchableOpacity style={styles.input} onPress={() => setShowIslamicSectPicker(true)}>
               <Text>{islamicSect || "Select Islamic sect"}</Text>
@@ -165,7 +164,7 @@ export default function ProfileDetailsScreen2() {
               selectedValue={islamicSect}
             />
             {islamicSect === "Other" && (
-              <>
+              <React.Fragment>
                 <Text style={styles.label}>Please specify:</Text>
                 <TextInput
                   style={styles.input}
@@ -173,12 +172,12 @@ export default function ProfileDetailsScreen2() {
                   value={otherSect}
                   onChangeText={setOtherSect}
                 />
-              </>
+              </React.Fragment>
             )}
 
             {/* Check if the religion is Islam and the gender is female (case-insensitive) */}
             {religion === "Islam" && route.params.gender.toLowerCase() === "female" && (
-              <>
+              <React.Fragment>
                 <Text style={styles.label}>Does {name} cover her head?</Text>
                 <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadPicker(true)}>
                   <Text>{coverHead || "Select option"}</Text>
@@ -194,15 +193,11 @@ export default function ProfileDetailsScreen2() {
                   selectedValue={coverHead}
                 />
                 {coverHead === "Yes" && (
-                  <>
+                  <React.Fragment>
                     <Text style={styles.label}>Please specify:</Text>
                     <TouchableOpacity style={styles.input} onPress={() => setShowCoverHeadTypePicker(true)}>
                       <Text>
-                        {coverHeadType
-                          ? coverHeadType === "dupatta"
-                            ? "With a dupatta"
-                            : "With an aabaya/hijaab"
-                          : "Select option"}
+                        {coverHeadType || "Select option"}
                       </Text>
                     </TouchableOpacity>
                     <PickerModal
@@ -215,11 +210,11 @@ export default function ProfileDetailsScreen2() {
                       ]}
                       selectedValue={coverHeadType}
                     />
-                  </>
+                  </React.Fragment>
                 )}
-              </>
+              </React.Fragment>
             )}
-          </>
+          </React.Fragment>
         )}
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -283,4 +278,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 })
-

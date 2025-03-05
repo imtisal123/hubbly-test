@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
+import { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+
+
 
 const SiblingCountScreen = () => {
   const navigation = useNavigation()
@@ -28,44 +30,48 @@ const SiblingCountScreen = () => {
     } else {
       navigation.navigate("Congrats3", route.params)
     }
-  }
+  };
+    
 
-  return (
+  
+return (
     <View style={styles.container}>
-      <BackButton />
-      <ProgressBar currentStep={1} totalSteps={7} />
-      <Text style={styles.title}>{`How many siblings does ${name} have?`}</Text>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Sisters:</Text>
-        <TextInput
-          style={styles.input}
-          value={sisters}
-          onChangeText={setSisters}
-          keyboardType="numeric"
-          placeholder="Enter number"
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Brothers:</Text>
-        <TextInput
-          style={styles.input}
-          value={brothers}
-          onChangeText={setBrothers}
-          keyboardType="numeric"
-          placeholder="Enter number"
-        />
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-          <Text style={styles.buttonText}>Back</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleNext}>
+      <BackButton style={styles.backButton} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProgressBar currentStep={1} totalSteps={7} />
+        <Text style={styles.title}>Sibling Information</Text>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>How many sisters does {name} have?</Text>
+          <TextInput
+            style={styles.input}
+            value={sisters}
+            onChangeText={setSisters}
+            keyboardType="numeric"
+            placeholder="0"
+            placeholderTextColor={theme.textLight}
+          />
+        </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>How many brothers does {name} have?</Text>
+          <TextInput
+            style={styles.input}
+            value={brothers}
+            onChangeText={setBrothers}
+            keyboardType="numeric"
+            placeholder="0"
+            placeholderTextColor={theme.textLight}
+          />
+        </View>
+        
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={handleNext}
+        >
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   )
 }
@@ -74,7 +80,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 20,
+  },
+  scrollContent: {
+    paddingTop: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
   },
   title: {
     fontSize: 24,
@@ -98,23 +114,20 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
   },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-  },
   button: {
     backgroundColor: theme.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
-    fontSize: 16,
+    color: "white",
+    fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
   },
 })
 
 export default SiblingCountScreen
-

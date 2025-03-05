@@ -1,8 +1,12 @@
-# Welcome to your Expo app 👋
+# Hubbly App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native mobile application for matrimonial matchmaking, built with Expo.
 
-## Get started
+## Overview
+
+Hubbly is a matrimonial app designed to help users create profiles for themselves or family members and find suitable matches based on preferences. The app features a comprehensive profile creation process, family information management, and match preferences.
+
+## Getting Started
 
 1. Install dependencies
 
@@ -13,38 +17,73 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 2. Start the app
 
    ```bash
-    npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+3. Scan the QR code with Expo Go (Android) or the Camera app (iOS)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Features
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- User authentication with phone number
+- Comprehensive profile creation
+- Family information management
+- Match preferences
+- Profile browsing
 
-## Get a fresh project
+## Code Structure
 
-When you're ready, run:
+The app is organized into the following directories:
+
+- `/screens`: Contains all screen components
+- `/components`: Reusable UI components
+- `/lib`: Utility functions and API calls
+- `/contexts`: React contexts for state management
+- `/styles`: Global styles and theme
+- `/scripts`: Utility scripts for development
+
+## Syntax Fixes
+
+The codebase has been thoroughly checked and fixed for common syntax errors:
+
+- Fixed duplicate import statements
+- Ensured proper return statements in all components
+- Fixed missing semicolons after function declarations
+- Ensured consistent component structure with ScrollView
+- Fixed unbalanced braces, parentheses, and brackets
+- Corrected improper component structure
+
+## Scripts for Code Quality
+
+Several scripts have been developed to maintain code quality:
+
+- `comprehensive_screen_checker.js`: Checks all screens for common issues and can fix them automatically
+- `fix_unbalanced_braces.js`: Specifically fixes unbalanced braces, parentheses, and brackets
+- `verify_all_screens.js`: Verifies that all screens meet the required structure and syntax
+
+To run the comprehensive checker with automatic fixes:
 
 ```bash
-npm run reset-project
+node scripts/comprehensive_screen_checker.js --fix
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+To verify all screens:
 
-## Learn more
+```bash
+node scripts/verify_all_screens.js
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Verification
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+A verification script is included to check for common syntax errors:
 
-## Join the community
+```bash
+node scripts/verify_all_screens.js
+```
 
-Join our community of developers creating universal apps.
+## Learn More
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+To learn more about the technologies used in this project:
+
+- [Expo documentation](https://docs.expo.dev/)
+- [React Native documentation](https://reactnative.dev/docs/getting-started)
+- [React Navigation documentation](https://reactnavigation.org/docs/getting-started)

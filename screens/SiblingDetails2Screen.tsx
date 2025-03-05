@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
-import { Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
-import PickerModal from "../components/PickerModal"
+import { useState } from "react";
+import { Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+import PickerModal from "../components/PickerModal";
 
 const SiblingDetails2Screen = () => {
   const navigation = useNavigation()
@@ -28,11 +28,15 @@ const SiblingDetails2Screen = () => {
       profession,
       education,
     })
-  }
+  };
+    
 
-  return (
-    <ScrollView style={styles.container}>
-      <BackButton />
+
+
+  
+return (
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+      <BackButton style={styles.backButton} />
       <ProgressBar currentStep={currentSibling * 3 - 1} totalSteps={totalSiblings * 3 + 1} />
       <Text style={styles.title}>{`${name}'s Sibling Details (${currentSibling}/${totalSiblings})`}</Text>
 
@@ -68,7 +72,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 20,
+  },
+  scrollContent: {
+    paddingTop: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
   },
   title: {
     fontSize: 24,
@@ -93,17 +107,18 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: theme.primary,
-    paddingVertical: 12,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
+    color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
   },
 })
 
 export default SiblingDetails2Screen
-

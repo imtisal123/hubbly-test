@@ -1,134 +1,147 @@
 "use client"
 
-import { useState } from "react"
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
-import PickerModal from "../components/PickerModal"
+import { useState } from "react";
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+import PickerModal from "../components/PickerModal";
+
+
 
 const MatchPreferencesScreen = () => {
-  const navigation = useNavigation()
-  const route = useRoute()
-  const { name } = route.params
-
-  const [selectedAges, setSelectedAges] = useState<string[]>([])
-  const [religion, setReligion] = useState("")
-  const [sect, setSect] = useState("")
-  const [otherSect, setOtherSect] = useState("")
-  const [ethnicity, setEthnicity] = useState("")
-
-  const [showReligionPicker, setShowReligionPicker] = useState(false)
-  const [showSectPicker, setShowSectPicker] = useState(false)
-
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { name } = route.params;
+  
+  const [ageRange, setAgeRange] = useState("");
+  const [heightRange, setHeightRange] = useState("");
+  const [educationPref, setEducationPref] = useState("");
+  const [locationPref, setLocationPref] = useState("");
+  const [showAgeRangePicker, setShowAgeRangePicker] = useState(false);
+  const [showHeightRangePicker, setShowHeightRangePicker] = useState(false);
+  const [showEducationPicker, setShowEducationPicker] = useState(false);
+  
   const handleNext = () => {
-    if (selectedAges.length > 0 && religion && ethnicity) {
-      navigation.navigate("FinalCongrats", {
-        name,
-        selectedAges,
-        religion,
-        sect: sect === "Other" ? otherSect : sect,
-        ethnicity,
-      })
-    } else {
-      alert("Please fill in all required fields")
+    if (!ageRange || !heightRange || !educationPref || !locationPref) {
+      alert("Please fill in all fields");
+      return;
     }
-  }
-
+    
+    navigation.navigate("FinalCongrats", {
+      ...route.params,
+      ageRange,
+      heightRange,
+      educationPref,
+      locationPref
+    });
+  };
+      
+  
   return (
-    <ScrollView style={styles.container}>
-      <BackButton />
-      <ProgressBar currentStep={2} totalSteps={3} />
-      <Text style={styles.title}>{`Please share ${name}'s preferences for a partner:`}</Text>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Age Range (select all that apply):</Text>
-        {["18-21", "22-25", "26-29", "30-33", "34-37", "38-41", "42+"].map((range) => (
-          <TouchableOpacity
-            key={range}
-            style={styles.checkboxContainer}
-            onPress={() => {
-              setSelectedAges((prev) =>
-                prev.includes(range) ? prev.filter((item) => item !== range) : [...prev, range],
-              )
-            }}
-          >
-            <View style={[styles.checkbox, selectedAges.includes(range) && styles.checked]} />
-            <Text style={styles.checkboxLabel}>{range}</Text>
+    <View style={styles.container}>
+      <BackButton style={styles.backButton} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProgressBar currentStep={7} totalSteps={7} />
+        <Text style={styles.title}>Match Preferences</Text>
+        <Text style={styles.subtitle}>Let us know what you're looking for in a match for {name}</Text>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Age Range</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setShowAgeRangePicker(true)}>
+            <Text>{ageRange || "Select age range"}</Text>
           </TouchableOpacity>
-        ))}
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Religion:</Text>
-        <TouchableOpacity style={styles.input} onPress={() => setShowReligionPicker(true)}>
-          <Text>{religion || "Select religion"}</Text>
+          <PickerModal
+            visible={showAgeRangePicker}
+            onClose={() => setShowAgeRangePicker(false)}
+            onSelect={(value) => setAgeRange(value)}
+            options={[
+              { label: "18-25", value: "18-25" },
+              { label: "25-30", value: "25-30" },
+              { label: "30-35", value: "30-35" },
+              { label: "35-40", value: "35-40" },
+              { label: "40-45", value: "40-45" },
+              { label: "45-50", value: "45-50" },
+              { label: "50+", value: "50+" },
+            ]}
+            selectedValue={ageRange}
+          />
+        </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Height Range</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setShowHeightRangePicker(true)}>
+            <Text>{heightRange || "Select height range"}</Text>
+          </TouchableOpacity>
+          <PickerModal
+            visible={showHeightRangePicker}
+            onClose={() => setShowHeightRangePicker(false)}
+            onSelect={(value) => setHeightRange(value)}
+            options={[
+              { label: "5'0\" - 5'4\"", value: "5'0\" - 5'4\"" },
+              { label: "5'4\" - 5'8\"", value: "5'4\" - 5'8\"" },
+              { label: "5'8\" - 6'0\"", value: "5'8\" - 6'0\"" },
+              { label: "6'0\" - 6'4\"", value: "6'0\" - 6'4\"" },
+              { label: "6'4\"+", value: "6'4\"+" },
+            ]}
+            selectedValue={heightRange}
+          />
+        </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Education Preference</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setShowEducationPicker(true)}>
+            <Text>{educationPref || "Select education preference"}</Text>
+          </TouchableOpacity>
+          <PickerModal
+            visible={showEducationPicker}
+            onClose={() => setShowEducationPicker(false)}
+            onSelect={(value) => setEducationPref(value)}
+            options={[
+              { label: "High School", value: "High School" },
+              { label: "Bachelors", value: "Bachelors" },
+              { label: "Masters", value: "Masters" },
+              { label: "PhD", value: "PhD" },
+              { label: "No Preference", value: "No Preference" },
+            ]}
+            selectedValue={educationPref}
+          />
+        </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Location Preference</Text>
+          <TextInput
+            style={styles.input}
+            value={locationPref}
+            onChangeText={setLocationPref}
+            placeholder="Enter location preference"
+          />
+        </View>
+        
+        <TouchableOpacity style={styles.button} onPress={handleNext}>
+          <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
-        <PickerModal
-          visible={showReligionPicker}
-          onClose={() => setShowReligionPicker(false)}
-          onSelect={(value) => {
-            setReligion(value)
-            setSect("")
-            setOtherSect("")
-          }}
-          options={[
-            { label: "Muslim", value: "Muslim" },
-            { label: "Christian", value: "Christian" },
-            { label: "Hindu", value: "Hindu" },
-          ]}
-          selectedValue={religion}
-        />
-      </View>
-
-      {religion === "Muslim" && (
-        <>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Sect:</Text>
-            <TouchableOpacity style={styles.input} onPress={() => setShowSectPicker(true)}>
-              <Text>{sect || "Select sect"}</Text>
-            </TouchableOpacity>
-            <PickerModal
-              visible={showSectPicker}
-              onClose={() => setShowSectPicker(false)}
-              onSelect={setSect}
-              options={[
-                { label: "Sunni", value: "Sunni" },
-                { label: "Shia", value: "Shia" },
-                { label: "Other", value: "Other" },
-              ]}
-              selectedValue={sect}
-            />
-            {sect === "Other" && (
-              <TextInput
-                style={[styles.input, { marginTop: 10 }]}
-                onChangeText={setOtherSect}
-                value={otherSect}
-                placeholder="Please specify"
-              />
-            )}
-          </View>
-        </>
-      )}
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Ethnicity:</Text>
-        <TextInput style={styles.input} onChangeText={setEthnicity} value={ethnicity} placeholder="Enter ethnicity" />
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 20,
+  },
+  scrollContent: {
+    paddingTop: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -157,16 +170,17 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: theme.primary,
-    paddingVertical: 12,
+    paddingVertical: 15,
     paddingHorizontal: 30,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 20,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
+    color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -190,4 +204,3 @@ const styles = StyleSheet.create({
 })
 
 export default MatchPreferencesScreen
-

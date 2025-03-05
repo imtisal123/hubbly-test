@@ -1,9 +1,11 @@
-import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
+import { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+
+
 
 const ParentStatusCheckScreen = () => {
   const navigation = useNavigation()
@@ -38,60 +40,82 @@ const ParentStatusCheckScreen = () => {
         fatherAlive,
       })
     }
-  }
+  };
+    
 
-  return (
+
+  
+  
+return (
     <View style={styles.container}>
-      <BackButton />
-      <ProgressBar currentStep={1} totalSteps={5} /> {/* Adjust total steps as needed */}
-      <Text style={styles.title}>Parent Status Check</Text>
-      <View style={styles.questionContainer}>
-        <Text style={styles.question}>{`Is ${name}'s mother still alive?`}</Text>
-        <View style={styles.optionsContainer}>
-          <TouchableOpacity
-            style={[styles.option, motherAlive === true && styles.selectedOption]}
-            onPress={() => setMotherAlive(true)}
-          >
-            <Text style={[styles.optionText, motherAlive === true && styles.selectedOptionText]}>Yes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.option, motherAlive === false && styles.selectedOption]}
-            onPress={() => setMotherAlive(false)}
-          >
-            <Text style={[styles.optionText, motherAlive === false && styles.selectedOptionText]}>No</Text>
-          </TouchableOpacity>
+      <BackButton style={styles.backButton} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProgressBar currentStep={1} totalSteps={7} />
+        <Text style={styles.title}>Parent Status Check</Text>
+        
+        <View style={styles.questionContainer}>
+          <Text style={styles.question}>Is {name}'s father alive?</Text>
+          <View style={styles.optionsContainer}>
+            <TouchableOpacity 
+              style={[styles.option, fatherAlive === true && styles.selectedOption]} 
+              onPress={() => setFatherAlive(true)}
+            >
+              <Text style={[styles.optionText, fatherAlive === true && styles.selectedOptionText]}>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.option, fatherAlive === false && styles.selectedOption]} 
+              onPress={() => setFatherAlive(false)}
+            >
+              <Text style={[styles.optionText, fatherAlive === false && styles.selectedOptionText]}>No</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      <View style={styles.questionContainer}>
-        <Text style={styles.question}>{`Is ${name}'s father still alive?`}</Text>
-        <View style={styles.optionsContainer}>
-          <TouchableOpacity
-            style={[styles.option, fatherAlive === true && styles.selectedOption]}
-            onPress={() => setFatherAlive(true)}
-          >
-            <Text style={[styles.optionText, fatherAlive === true && styles.selectedOptionText]}>Yes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.option, fatherAlive === false && styles.selectedOption]}
-            onPress={() => setFatherAlive(false)}
-          >
-            <Text style={[styles.optionText, fatherAlive === false && styles.selectedOptionText]}>No</Text>
-          </TouchableOpacity>
+        
+        <View style={styles.questionContainer}>
+          <Text style={styles.question}>Is {name}'s mother alive?</Text>
+          <View style={styles.optionsContainer}>
+            <TouchableOpacity 
+              style={[styles.option, motherAlive === true && styles.selectedOption]} 
+              onPress={() => setMotherAlive(true)}
+            >
+              <Text style={[styles.optionText, motherAlive === true && styles.selectedOptionText]}>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.option, motherAlive === false && styles.selectedOption]} 
+              onPress={() => setMotherAlive(false)}
+            >
+              <Text style={[styles.optionText, motherAlive === false && styles.selectedOptionText]}>No</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-        <Text style={styles.nextButtonText}>Next</Text>
-      </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[styles.button, (motherAlive === null || fatherAlive === null) && styles.buttonDisabled]} 
+          onPress={handleNext}
+          disabled={motherAlive === null || fatherAlive === null}
+        >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    paddingTop: 60,
+  },
+  scrollContent: {
+    paddingTop: 100,
     paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -122,28 +146,34 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: theme.primary,
+    borderColor: theme.primary,
   },
   optionText: {
-    color: theme.text,
     fontSize: 16,
-    fontWeight: "bold",
+    color: theme.text,
   },
   selectedOptionText: {
-    color: theme.textLight,
+    color: "white",
+    fontWeight: "bold",
   },
-  nextButton: {
+  button: {
     backgroundColor: theme.primary,
-    paddingVertical: 12,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
-  nextButtonText: {
-    color: theme.textLight,
+  buttonDisabled: {
+    backgroundColor: theme.textMedium,
+    opacity: 0.7,
+  },
+  buttonText: {
+    color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
   },
 })
 
 export default ParentStatusCheckScreen
-

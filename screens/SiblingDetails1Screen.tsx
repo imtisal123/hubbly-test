@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
-import { Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
-import PickerModal from "../components/PickerModal"
+import { useState } from "react";
+import { Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+import PickerModal from "../components/PickerModal";
 
 const SiblingDetails1Screen = () => {
   const navigation = useNavigation()
@@ -17,6 +17,7 @@ const SiblingDetails1Screen = () => {
   const [gender, setGender] = useState("")
   const [maritalStatus, setMaritalStatus] = useState("")
   const [cityOfResidence, setCityOfResidence] = useState("")
+  const [areaOfResidence, setAreaOfResidence] = useState("")
 
   const [showAgePicker, setShowAgePicker] = useState(false)
   const [showGenderPicker, setShowGenderPicker] = useState(false)
@@ -34,16 +35,21 @@ const SiblingDetails1Screen = () => {
       gender,
       maritalStatus,
       cityOfResidence,
+      areaOfResidence,
     })
   }
 
   const generateAgeOptions = () => {
     return Array.from({ length: 51 }, (_, i) => ({ label: `${i} years`, value: i.toString() }))
-  }
+  };
+    
 
-  return (
-    <ScrollView style={styles.container}>
-      <BackButton />
+
+
+  
+return (
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+      <BackButton style={styles.backButton} />
       <ProgressBar currentStep={currentSibling * 3 - 1} totalSteps={totalSiblings * 3 + 1} />
       <Text style={styles.title}>{`${name}'s ${
         currentSibling <= sisters ? "Sister" : "Brother"
@@ -103,6 +109,15 @@ const SiblingDetails1Screen = () => {
         placeholderTextColor={theme.textLight}
       />
 
+      <Text style={styles.label}>Area of Residence</Text>
+      <TextInput
+        style={[styles.input, { height: 40 }]}
+        value={areaOfResidence}
+        onChangeText={setAreaOfResidence}
+        placeholder="Enter area of residence (optional)"
+        placeholderTextColor={theme.textLight}
+      />
+
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
@@ -114,7 +129,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 20,
+  },
+  scrollContent: {
+    paddingTop: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
   },
   title: {
     fontSize: 24,
@@ -139,17 +164,18 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: theme.primary,
-    paddingVertical: 12,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
+    color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
   },
 })
 
 export default SiblingDetails1Screen
-

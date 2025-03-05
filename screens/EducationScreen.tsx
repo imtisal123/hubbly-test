@@ -1,75 +1,105 @@
 "use client"
 
-import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
-import PickerModal from "../components/PickerModal"
+import { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+import PickerModal from "../components/PickerModal";
 
 export default function EducationScreen() {
-  const navigation = useNavigation()
-  const route = useRoute()
-  const { name, gender } = route.params
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { name, dateOfBirth, gender, ethnicity, location } = route.params;
 
-  const [educationLevel, setEducationLevel] = useState("")
-  const [university, setUniversity] = useState("")
-  const [showEducationLevelPicker, setShowEducationLevelPicker] = useState(false)
+  const [educationLevel, setEducationLevel] = useState("");
+  const [institution, setInstitution] = useState("");
+  const [fieldOfStudy, setFieldOfStudy] = useState("");
+  const [showEducationPicker, setShowEducationPicker] = useState(false);
 
   const handleNext = () => {
+    if (!educationLevel) {
+      alert("Please select your education level");
+      return;
+    }
+
     navigation.navigate("Career", {
       ...route.params,
-      educationLevel,
-      university,
-    })
-  }
-
+      education: {
+        level: educationLevel,
+        institution,
+        fieldOfStudy,
+      },
+    });
+  };
+  
   return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton style={styles.backButton} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProgressBar currentStep={8} totalSteps={13} />
-        <Text style={styles.title}>Education Details for {name}</Text>
-
-        <Text style={styles.label}>{`What is ${name}'s highest Education Level?`}</Text>
-        <TouchableOpacity style={styles.input} onPress={() => setShowEducationLevelPicker(true)}>
+        <ProgressBar currentStep={4} totalSteps={7} />
+        <Text style={styles.title}>Education Details</Text>
+        
+        <Text style={styles.label}>Highest Education Level</Text>
+        <TouchableOpacity style={styles.input} onPress={() => setShowEducationPicker(true)}>
           <Text>{educationLevel || "Select education level"}</Text>
         </TouchableOpacity>
-        <PickerModal
-          visible={showEducationLevelPicker}
-          onClose={() => setShowEducationLevelPicker(false)}
-          onSelect={(value) => setEducationLevel(value)}
-          options={[
-            { label: "High school", value: "High school" },
-            { label: "Bachelors", value: "Bachelors" },
-            { label: "Masters", value: "Masters" },
-            { label: "PHD", value: "PHD" },
-            { label: "MBBS", value: "MBBS" },
-          ]}
-          selectedValue={educationLevel}
-        />
-
-        <Text
-          style={styles.label}
-        >{`Which university did ${name} get ${gender.toLowerCase() === "male" ? "his" : "her"} highest educational degree from?`}</Text>
+        
+        <Text style={styles.label}>Institution</Text>
         <TextInput
           style={styles.input}
-          value={university}
-          onChangeText={setUniversity}
-          placeholder="Enter university name"
-          placeholderTextColor={theme.textLight}
+          value={institution}
+          onChangeText={setInstitution}
+          placeholder="Enter your institution name"
         />
-
-        <TouchableOpacity style={styles.button} onPress={handleNext}>
+        
+        <Text style={styles.label}>Field of Study</Text>
+        <TextInput
+          style={styles.input}
+          value={fieldOfStudy}
+          onChangeText={setFieldOfStudy}
+          placeholder="Enter your field of study"
+        />
+        
+        <TouchableOpacity
+          style={[styles.button, !educationLevel && styles.buttonDisabled]}
+          onPress={handleNext}
+          disabled={!educationLevel}
+        >
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </ScrollView>
+      
+      <PickerModal
+        visible={showEducationPicker}
+        options={[
+          { label: "High School", value: "High School" },
+          { label: "Associate's Degree", value: "Associate's Degree" },
+          { label: "Bachelor's Degree", value: "Bachelor's Degree" },
+          { label: "Master's Degree", value: "Master's Degree" },
+          { label: "Doctorate", value: "Doctorate" },
+          { label: "Professional Degree", value: "Professional Degree" },
+          { label: "Other", value: "Other" },
+        ]}
+        onSelect={(value) => {
+          setEducationLevel(value);
+          setShowEducationPicker(false);
+        }}
+        onClose={() => setShowEducationPicker(false)}
+        selectedValue={educationLevel}
+      />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
@@ -77,6 +107,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 100,
     paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -88,31 +119,33 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
-    color: theme.text,
-    fontWeight: "bold",
+    marginTop: 15,
+    color: theme.textDark,
   },
   input: {
     height: 40,
     borderColor: theme.border,
     borderWidth: 1,
     borderRadius: 5,
-    marginBottom: 20,
     paddingHorizontal: 10,
     justifyContent: "center",
     backgroundColor: theme.textLight,
   },
   button: {
     backgroundColor: theme.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
-    marginBottom: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
+  },
+  buttonDisabled: {
+    backgroundColor: theme.border,
   },
   buttonText: {
-    color: theme.textLight,
-    fontSize: 16,
+    color: "white",
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
   },
-})
-
+});

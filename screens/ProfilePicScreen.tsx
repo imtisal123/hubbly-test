@@ -1,21 +1,21 @@
 "use client"
 
-import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
-import { Camera } from "lucide-react-native"
-import * as ImagePicker from "expo-image-picker"
+import { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+import { Camera } from "lucide-react-native";
+import * as ImagePicker from "expo-image-picker";
 
 export default function ProfilePicScreen() {
-  const navigation = useNavigation()
-  const route = useRoute()
-  const { name, gender } = route.params
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { name, gender } = route.params;
 
-  const [image, setImage] = useState(null)
-  const [showOnlyToMatches, setShowOnlyToMatches] = useState(false)
+  const [image, setImage] = useState(null);
+  const [showOnlyToMatches, setShowOnlyToMatches] = useState(false);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -23,17 +23,17 @@ export default function ProfilePicScreen() {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-    })
+    });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri)
+      setImage(result.assets[0].uri);
     }
-  }
+  };
 
   const handleNext = () => {
     if (gender.toLowerCase() === "male" && !image) {
-      Alert.alert("Error", "Please upload at least one picture")
-      return
+      Alert.alert("Error", "Please upload at least one picture");
+      return;
     }
     // Here you would typically upload the image to your server
     // and then navigate to the next screen or complete the profile creation
@@ -41,12 +41,12 @@ export default function ProfilePicScreen() {
       ...route.params,
       profilePicture: image,
       showOnlyToMatches,
-    })
-  }
-
+    });
+  };
+  
   return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton style={styles.backButton} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <ProgressBar
           currentStep={gender.toLowerCase() === "male" ? 11 : 10}
@@ -77,20 +77,33 @@ export default function ProfilePicScreen() {
                   </View>
                 )}
               </TouchableOpacity>
-              <Text style={styles.checkboxLabel}>Only show {name}'s picture to profiles I match with</Text>
+              <Text style={styles.checkboxLabel}>Only show my pictures to matches</Text>
             </View>
           </View>
         )}
 
-        <TouchableOpacity style={styles.button} onPress={handleNext}>
-          <Text style={styles.buttonText}>{gender.toLowerCase() === "female" && !image ? "Skip" : "Next"}</Text>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            gender.toLowerCase() === "male" && !image && styles.buttonDisabled
+          ]}
+          onPress={handleNext}
+          disabled={gender.toLowerCase() === "male" && !image}
+        >
+          <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
@@ -98,6 +111,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 100,
     paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 28,
@@ -137,61 +151,55 @@ const styles = StyleSheet.create({
   privacyText: {
     textAlign: "center",
     marginBottom: 20,
-    color: theme.text,
+    color: theme.textDark,
     fontSize: 16,
   },
   checkboxContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: theme.border,
-    borderRadius: 5,
-    padding: 10,
-    backgroundColor: theme.background,
+    justifyContent: "center",
+    marginBottom: 30,
   },
   checkbox: {
     width: 24,
     height: 24,
-    borderWidth: 2,
-    borderColor: theme.border,
     borderRadius: 4,
+    borderWidth: 2,
+    borderColor: theme.primary,
     marginRight: 10,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: theme.textLight,
   },
   checkboxChecked: {
     backgroundColor: theme.primary,
-    borderColor: theme.primary,
   },
   checkmark: {
-    width: "100%",
-    height: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
   checkmarkText: {
-    color: theme.textLight,
+    color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },
   checkboxLabel: {
-    flex: 1,
-    color: theme.text,
     fontSize: 16,
+    color: theme.textDark,
   },
   button: {
     backgroundColor: theme.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
+  },
+  buttonDisabled: {
+    backgroundColor: theme.border,
   },
   buttonText: {
     color: theme.textLight,
     fontSize: 18,
     fontWeight: "bold",
-    textAlign: "center",
   },
-})
-
+});

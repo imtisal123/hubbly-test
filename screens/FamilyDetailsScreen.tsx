@@ -20,60 +20,76 @@ const FamilyDetailsScreen = () => {
 
   const handleNext = () => {
     if (familyEnvironment) {
-      navigation.navigate("MatchPreferences", { name, familyEnvironment, additionalInfo })
+      navigation.navigate("MatchPreferences", { 
+        ...route.params,
+        familyEnvironment, 
+        additionalInfo 
+      })
     } else {
       alert("Please select a family environment")
     }
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <BackButton />
-      <ProgressBar currentStep={1} totalSteps={3} />
-      <Text style={styles.title}>{`Please add ${name}'s family details:`}</Text>
+    <View style={styles.container}>
+      <BackButton style={styles.backButton} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProgressBar currentStep={6} totalSteps={7} />
+        <Text style={styles.title}>{`Please add ${name}'s family details:`}</Text>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Family environment:</Text>
-        <TouchableOpacity style={styles.input} onPress={() => setShowEnvironmentPicker(true)}>
-          <Text>{familyEnvironment || "Select family environment"}</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Family environment:</Text>
+          <TouchableOpacity style={styles.input} onPress={() => setShowEnvironmentPicker(true)}>
+            <Text>{familyEnvironment || "Select family environment"}</Text>
+          </TouchableOpacity>
+          <PickerModal
+            visible={showEnvironmentPicker}
+            onClose={() => setShowEnvironmentPicker(false)}
+            onSelect={(value) => setFamilyEnvironment(value)}
+            options={[
+              { label: "Liberal", value: "Liberal" },
+              { label: "Moderate", value: "Moderate" },
+              { label: "Conservative", value: "Conservative" },
+            ]}
+            selectedValue={familyEnvironment}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>{`Is there anything else you would like to share about ${name}'s family:`}</Text>
+          <TextInput
+            style={styles.textArea}
+            multiline
+            numberOfLines={4}
+            onChangeText={setAdditionalInfo}
+            value={additionalInfo}
+            placeholder="Enter additional information here"
+          />
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleNext}>
+          <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
-        <PickerModal
-          visible={showEnvironmentPicker}
-          onClose={() => setShowEnvironmentPicker(false)}
-          onSelect={(value) => setFamilyEnvironment(value)}
-          options={[
-            { label: "Liberal", value: "Liberal" },
-            { label: "Moderate", value: "Moderate" },
-            { label: "Conservative", value: "Conservative" },
-          ]}
-          selectedValue={familyEnvironment}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>{`Is there anything else you would like to share about ${name}'s family:`}</Text>
-        <TextInput
-          style={styles.textArea}
-          multiline
-          numberOfLines={4}
-          onChangeText={setAdditionalInfo}
-          value={additionalInfo}
-          placeholder="Enter additional information here"
-        />
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 20,
+  },
+  scrollContent: {
+    paddingTop: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -109,18 +125,18 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: theme.primary,
-    paddingVertical: 12,
+    paddingVertical: 15,
     paddingHorizontal: 30,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 20,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
+    color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
   },
 })
 
 export default FamilyDetailsScreen
-

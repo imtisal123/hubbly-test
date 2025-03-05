@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
+import { useState } from "react";
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
 
 const ethnicities = [
   "Punjabi",
@@ -21,134 +21,115 @@ const ethnicities = [
   "Chitrali",
   "Shina",
   "Balti",
-  "Kohistani",
-  "Torwali",
-  "Hazara",
   "Burusho",
   "Wakhi",
-  "Kalash",
-  "Siddi",
-  "Uzbek",
-  "Nuristani",
-  "Pamiri",
-  "Meo",
-  "Gujjar",
-  "Rajput",
-  "Jat",
-  "Awan",
-  "Syed",
-  "Memon",
-  "Bengali",
-  "Rohingya",
-  "Makrani",
-  "Kohli",
-  "Bheel",
-  "Marwari",
-  "Lohar",
-  "Gondal",
-  "Khosa",
-  "Leghari",
-  "Marri",
-  "Bugti",
-  "Mazari",
-  "Afridi",
-  "Yousafzai",
-  "Khattak",
-  "Wazir",
-  "Mahsud",
-  "Shinwari",
-  "Turi",
-  "Bangash",
-  "Orakzai",
-  "Kakar",
-  "Luni",
-  "Achakzai",
-  "Zarkun",
-  "Mengal",
-  "Zehri",
-  "Rind",
-  "Domki",
-  "Jamali",
-  "Lashari",
-  "Gichki",
-  "Bizenjo",
-  "Magsi",
-  "Jatoi",
-  "Talpur",
-  "Chandio",
-  "Bhutto",
-  "Soomro",
-  "Junejo",
-  "Maher",
-  "Abbasi",
-  "Khan",
-  "Malik",
-  "Sheikh",
-  "Qureshi",
-  "Ansari",
-  "Chaudhry",
-]
+  "Khowar",
+  "Other"
+];
 
 export default function ProfileEthnicityScreen() {
-  const route = useRoute()
-  const { name, dateOfBirth: dateOfBirthString, gender } = route.params
-  const dateOfBirth = new Date(dateOfBirthString) // Convert string back to Date object if needed
-  const [ethnicity, setEthnicity] = useState("")
-  const [filteredEthnicities, setFilteredEthnicities] = useState([])
-  const navigation = useNavigation()
-
-  useEffect(() => {
-    if (ethnicity) {
-      const filtered = ethnicities.filter((item) => item.toLowerCase().includes(ethnicity.toLowerCase()))
-      setFilteredEthnicities(filtered)
-    } else {
-      setFilteredEthnicities([])
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { name, dateOfBirth, gender } = route.params;
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedEthnicity, setSelectedEthnicity] = useState("");
+  const [showAllEthnicities, setShowAllEthnicities] = useState(false);
+  
+  const filteredEthnicities = searchQuery.length > 0 
+    ? ethnicities.filter(ethnicity => 
+        ethnicity.toLowerCase().includes(searchQuery.toLowerCase()))
+    : showAllEthnicities ? ethnicities : [];
+  
+  const handleNext = () => {
+    if (!selectedEthnicity) {
+      alert("Please select your ethnicity");
+      return;
     }
-  }, [ethnicity])
-
-  const handleSubmit = () => {
+    
     navigation.navigate("Location", {
       ...route.params,
-      ethnicity,
-    })
-  }
-
+      ethnicity: selectedEthnicity
+    });
+  };
+  
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={[
+        styles.ethnicityItem,
+        selectedEthnicity === item && styles.selectedItem
+      ]}
+      onPress={() => setSelectedEthnicity(item)}
+    >
+      <Text
+        style={[
+          styles.ethnicityText,
+          selectedEthnicity === item && styles.selectedText
+        ]}
+      >
+        {item}
+      </Text>
+    </TouchableOpacity>
+  );
+  
   return (
     <View style={styles.container}>
-      <BackButton />
-      <ProgressBar currentStep={5} totalSteps={13} />
-      <Text style={styles.title}>What is {name}'s ethnicity?</Text>
-      <TextInput
-        style={styles.input}
-        value={ethnicity}
-        onChangeText={setEthnicity}
-        placeholder="Start typing ethnicity"
-      />
-      {filteredEthnicities.length > 0 && (
+      <BackButton style={styles.backButton} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ProgressBar currentStep={3} totalSteps={7} />
+        <Text style={styles.title}>What is your ethnicity?</Text>
+        
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search ethnicity..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        
+        <TouchableOpacity
+          style={styles.showAllButton}
+          onPress={() => setShowAllEthnicities(!showAllEthnicities)}
+        >
+          <Text style={styles.showAllText}>
+            {showAllEthnicities ? "Hide all ethnicities" : "Show all ethnicities"}
+          </Text>
+        </TouchableOpacity>
+        
         <FlatList
           data={filteredEthnicities}
-          keyExtractor={(item) => item}
-          style={styles.autocompleteList}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.autocompleteItem} onPress={() => setEthnicity(item)}>
-              <Text>{item}</Text>
-            </TouchableOpacity>
-          )}
+          renderItem={renderItem}
+          keyExtractor={item => item}
+          style={styles.list}
+          scrollEnabled={false}
         />
-      )}
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[styles.button, !selectedEthnicity && styles.buttonDisabled]}
+          onPress={handleNext}
+          disabled={!selectedEthnicity}
+        >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 20,
+  },
+  scrollContent: {
     paddingTop: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -157,38 +138,59 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: theme.primaryDark,
   },
-  input: {
+  searchInput: {
     height: 40,
     borderColor: theme.border,
     borderWidth: 1,
     borderRadius: 5,
-    marginBottom: 20,
     paddingHorizontal: 10,
+    marginBottom: 20,
     backgroundColor: theme.textLight,
   },
-  autocompleteList: {
-    maxHeight: 200,
-    borderColor: theme.border,
-    borderWidth: 1,
-    borderRadius: 5,
+  list: {
     marginBottom: 20,
   },
-  autocompleteItem: {
-    padding: 10,
+  ethnicityItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: theme.border,
   },
+  selectedItem: {
+    backgroundColor: theme.primaryLight,
+  },
+  ethnicityText: {
+    fontSize: 16,
+    color: theme.textDark,
+  },
+  selectedText: {
+    fontWeight: "bold",
+    color: theme.primary,
+  },
   button: {
     backgroundColor: theme.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
+  },
+  buttonDisabled: {
+    backgroundColor: theme.border,
   },
   buttonText: {
-    color: theme.textLight,
-    fontSize: 16,
+    color: "white",
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
   },
-})
-
+  showAllButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginBottom: 20,
+  },
+  showAllText: {
+    fontSize: 16,
+    color: theme.textDark,
+  },
+});

@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
-import { Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
-import PickerModal from "../components/PickerModal"
+import { useState } from "react";
+import { Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+import PickerModal from "../components/PickerModal";
 
 const MotherAdditionalInfoScreen = () => {
   const navigation = useNavigation()
@@ -28,11 +28,15 @@ const MotherAdditionalInfoScreen = () => {
       motherProfession: profession,
       motherEducation: education,
     })
-  }
+  };
+    
 
-  return (
-    <ScrollView style={styles.container}>
-      <BackButton />
+
+
+  
+return (
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+      <BackButton style={styles.backButton} />
       <ProgressBar currentStep={4} totalSteps={5} />
       <Text style={styles.title}>{`${name}'s Mother's Additional Info`}</Text>
 
@@ -65,10 +69,20 @@ const MotherAdditionalInfoScreen = () => {
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 20,
+  },
+  scrollContent: {
+    paddingTop: 100,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -93,15 +107,17 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: theme.primary,
-    paddingVertical: 12,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
+    color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
   },
 })
 

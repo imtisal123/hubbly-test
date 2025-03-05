@@ -34,7 +34,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { AuthProvider, useAuth } from "../contexts/AuthContext"
 import { View, Text, ActivityIndicator } from "react-native"
 import { theme } from "../styles/theme"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { ensureDatabaseSetup } from "../lib/databaseSetup"
 
 const Stack = createNativeStackNavigator()
 
@@ -56,7 +57,39 @@ function Navigation() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!user ? (
         // Auth screens
-        <Stack.Screen name="LoginSignup" component={LoginSignupScreen} />
+        <>
+          <Stack.Screen name="LoginSignup" component={LoginSignupScreen} />
+          <Stack.Screen name="Placeholder" component={PlaceholderScreen} />
+          {/* Allow direct access to profile creation for demo purposes */}
+          <Stack.Screen name="ProfileCreation" component={ProfileCreationScreen} />
+          <Stack.Screen name="Name" component={NameScreen} />
+          <Stack.Screen name="ProfileDetails1" component={ProfileDetailsScreen1} />
+          <Stack.Screen name="ProfileDetails2" component={ProfileDetailsScreen2} />
+          <Stack.Screen name="ProfileEthnicity" component={ProfileEthnicityScreen} />
+          <Stack.Screen name="Location" component={LocationScreen} />
+          <Stack.Screen name="Nationality" component={NationalityScreen} />
+          <Stack.Screen name="Education" component={EducationScreen} />
+          <Stack.Screen name="Career" component={CareerScreen} />
+          <Stack.Screen name="Other" component={OtherScreen} />
+          <Stack.Screen name="ProfilePic" component={ProfilePicScreen} />
+          <Stack.Screen name="Congrats1" component={Congrats1Screen} />
+          <Stack.Screen name="ParentStatusCheck" component={ParentStatusCheckScreen} />
+          <Stack.Screen name="MotherDetails" component={MotherDetailsScreen} />
+          <Stack.Screen name="MotherAdditionalInfo" component={MotherAdditionalInfoScreen} />
+          <Stack.Screen name="MotherProfilePicUpload" component={MotherProfilePicUploadScreen} />
+          <Stack.Screen name="FatherDetails" component={FatherDetailsScreen} />
+          <Stack.Screen name="FatherAdditionalInfo" component={FatherAdditionalInfoScreen} />
+          <Stack.Screen name="FatherProfilePicUpload" component={FatherProfilePicUploadScreen} />
+          <Stack.Screen name="Congrats2" component={Congrats2Screen} />
+          <Stack.Screen name="SiblingCount" component={SiblingCountScreen} />
+          <Stack.Screen name="SiblingDetails1" component={SiblingDetails1Screen} />
+          <Stack.Screen name="SiblingDetails2" component={SiblingDetails2Screen} />
+          <Stack.Screen name="SiblingProfilePicUpload" component={SiblingProfilePicUploadScreen} />
+          <Stack.Screen name="Congrats3" component={Congrats3Screen} />
+          <Stack.Screen name="FamilyDetails" component={FamilyDetailsScreen} />
+          <Stack.Screen name="MatchPreferences" component={MatchPreferencesScreen} />
+          <Stack.Screen name="FinalCongrats" component={FinalCongratsScreen} />
+        </>
       ) : !profile?.name ? (
         // Profile creation screens - if user is authenticated but profile is incomplete
         <>
@@ -101,9 +134,45 @@ function Navigation() {
 }
 
 export default function App() {
+  const [databaseReady, setDatabaseReady] = useState(false);
+  const [databaseError, setDatabaseError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Set up the database when the app starts
+    async function setupDatabase() {
+      try {
+        const success = await ensureDatabaseSetup();
+        setDatabaseReady(success);
+        if (!success) {
+          setDatabaseError('Failed to set up database. Some features may not work correctly.');
+        }
+      } catch (error) {
+        console.error('Error setting up database:', error);
+        setDatabaseError('Error setting up database. Some features may not work correctly.');
+        setDatabaseReady(false);
+      }
+    }
+
+    setupDatabase();
+  }, []);
+
+  if (!databaseReady) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.background }}>
+        <ActivityIndicator size="large" color={theme.primary} />
+        <Text style={{ marginTop: 20, color: theme.text }}>Setting up database...</Text>
+      </View>
+    );
+  }
+
   return (
     <AuthProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
+        {databaseError && (
+          <View style={{ backgroundColor: '#ffcccc', padding: 10 }}>
+            <Text style={{ color: '#990000' }}>{databaseError}</Text>
+          </View>
+        )}
         <Navigation />
       </GestureHandlerRootView>
     </AuthProvider>

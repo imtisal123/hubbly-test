@@ -1,91 +1,125 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
-import PickerModal from "../components/PickerModal"
+import { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+import PickerModal from "../components/PickerModal";
 
 export default function CareerScreen() {
-  const navigation = useNavigation()
-  const route = useRoute()
-  const { name, gender } = route.params
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { name, dateOfBirth, gender, ethnicity, location, education } = route.params;
 
-  const [employer, setEmployer] = useState("")
-  const [jobTitle, setJobTitle] = useState("")
-  const [monthlyIncome, setMonthlyIncome] = useState("")
-  const [showIncomePicker, setShowIncomePicker] = useState(false)
+  const [occupation, setOccupation] = useState("");
+  const [company, setCompany] = useState("");
+  const [income, setIncome] = useState("");
+  const [showIncomePicker, setShowIncomePicker] = useState(false);
 
   useEffect(() => {
-    console.log("Debug: Gender is", gender, "Is male?", gender.toLowerCase() === "male")
-    console.log("Debug: Rendering labels for", gender.toLowerCase() === "male" ? "male" : "non-male")
-  }, [gender])
+    // If we have career info in the route params, set it
+    if (route.params?.career) {
+      const { occupation: savedOccupation, company: savedCompany, income: savedIncome } = route.params.career;
+      if (savedOccupation) setOccupation(savedOccupation);
+      if (savedCompany) setCompany(savedCompany);
+      if (savedIncome) setIncome(savedIncome);
+    }
+  }, [route.params]);
 
-  const handleSubmit = () => {
-    const careerData = {
+  const incomeRanges = [
+    { label: "Prefer not to say", value: "Prefer not to say" },
+    { label: "Under $30,000", value: "Under $30,000" },
+    { label: "$30,000 - $50,000", value: "$30,000 - $50,000" },
+    { label: "$50,000 - $75,000", value: "$50,000 - $75,000" },
+    { label: "$75,000 - $100,000", value: "$75,000 - $100,000" },
+    { label: "$100,000 - $150,000", value: "$100,000 - $150,000" },
+    { label: "$150,000 - $200,000", value: "$150,000 - $200,000" },
+    { label: "Over $200,000", value: "Over $200,000" }
+  ];
+
+  const handleNext = () => {
+    // Navigate to the next screen with all the accumulated data
+    navigation.navigate("ProfilePic", {
       ...route.params,
-      employer,
-      jobTitle,
-      monthlyIncome: gender.toLowerCase() === "male" ? monthlyIncome : undefined,
-    }
-
-    if (gender.toLowerCase() === "male") {
-      navigation.navigate("Home", careerData)
-    } else {
-      navigation.navigate("Other", careerData)
-    }
-  }
+      career: {
+        occupation,
+        company,
+        income
+      }
+    });
+  };
 
   return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton style={styles.backButton} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProgressBar currentStep={9} totalSteps={13} />
-        <Text style={styles.title}>Career Details for {name}</Text>
-        {/* Debug information */}
-        {/* <Text style={styles.debugText}>Gender: {gender}, Is male? {gender.toLowerCase() === "male" ? "Yes" : "No"}</Text> */}
-        <Text style={styles.label}>{gender.toLowerCase() === "male" ? "Employer" : "Employer (Optional)"}</Text>
-        <TextInput style={styles.input} value={employer} onChangeText={setEmployer} placeholder="Enter employer name" />
-        {/* Debug information */}
-        {/* <Text style={styles.debugText}>Gender: {gender}, Is male? {gender.toLowerCase() === "male" ? "Yes" : "No"}</Text> */}
-        <Text style={styles.label}>{gender.toLowerCase() === "male" ? "Job Title" : "Job Title (Optional)"}</Text>
-        <TextInput style={styles.input} value={jobTitle} onChangeText={setJobTitle} placeholder="Enter job title" />
-        {gender.toLowerCase() === "male" && (
-          <>
-            <Text style={styles.label}>Monthly Income</Text>
-            <TouchableOpacity style={styles.input} onPress={() => setShowIncomePicker(true)}>
-              <Text>{monthlyIncome || "Select income range"}</Text>
-            </TouchableOpacity>
-            <PickerModal
-              visible={showIncomePicker}
-              onClose={() => setShowIncomePicker(false)}
-              onSelect={(value) => setMonthlyIncome(value)}
-              options={[
-                { label: "PKR 0 - PKR 100,000", value: "PKR 0 - PKR 100,000" },
-                { label: "PKR 100,000 - PKR 200,000", value: "PKR 100,000 - PKR 200,000" },
-                { label: "PKR 200,000 - PKR 500,000", value: "PKR 200,000 - PKR 500,000" },
-                { label: "PKR 500,000 - PKR 1,000,000", value: "PKR 500,000 - PKR 1,000,000" },
-                { label: "PKR 1,000,000+", value: "PKR 1,000,000+" },
-              ]}
-              selectedValue={monthlyIncome}
-            />
-            <Text style={styles.note}>
-              Note: This information will not be shown to others but is used to show you profiles from similar income
-              backgrounds.
+        <ProgressBar 
+          currentStep={gender.toLowerCase() === "male" ? 10 : 9} 
+          totalSteps={gender.toLowerCase() === "male" ? 11 : 10} 
+        />
+        <Text style={styles.title}>Career Details</Text>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Occupation</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. Software Engineer"
+            value={occupation}
+            onChangeText={setOccupation}
+          />
+        </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Company/Organization</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. Google"
+            value={company}
+            onChangeText={setCompany}
+          />
+        </View>
+        
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Income Range (Optional)</Text>
+          <TouchableOpacity 
+            style={styles.input} 
+            onPress={() => setShowIncomePicker(true)}
+          >
+            <Text style={income ? styles.inputText : styles.placeholder}>
+              {income || "Select income range"}
             </Text>
-          </>
-        )}
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleNext}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </ScrollView>
+      
+      <PickerModal
+        visible={showIncomePicker}
+        options={incomeRanges}
+        onSelect={(value) => {
+          setIncome(value);
+          setShowIncomePicker(false);
+        }}
+        onClose={() => setShowIncomePicker(false)}
+        selectedValue={income}
+        title="Select Income Range"
+      />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
@@ -93,58 +127,50 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 100,
     paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 30,
     textAlign: "center",
     color: theme.primaryDark,
-    paddingHorizontal: 20,
+  },
+  inputContainer: {
+    marginBottom: 20,
   },
   label: {
     fontSize: 16,
-    marginBottom: 5,
-    color: theme.text,
-    fontWeight: "bold",
-    paddingHorizontal: 20,
+    marginBottom: 8,
+    color: theme.textDark,
   },
   input: {
-    height: 40,
-    borderColor: theme.border,
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    justifyContent: "center",
     backgroundColor: theme.textLight,
-    marginHorizontal: 20,
+    borderRadius: 5,
+    padding: 15,
+    fontSize: 16,
+    color: theme.text,
+  },
+  inputText: {
+    color: theme.text,
+    fontSize: 16,
+  },
+  placeholder: {
+    color: theme.border,
+    fontSize: 16,
   },
   button: {
     backgroundColor: theme.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
-    marginHorizontal: 20,
-    marginBottom: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
-    fontSize: 16,
+    color: "white",
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
   },
-  note: {
-    fontSize: 12,
-    color: theme.text,
-    fontStyle: "italic",
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
-  debugText: {
-    fontSize: 12,
-    color: "red",
-    marginBottom: 10,
-  },
-})
-
+});

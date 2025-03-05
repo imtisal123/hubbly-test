@@ -28,7 +28,9 @@ const PickerModal: React.FC<PickerModalProps> = ({ visible, onClose, onSelect, o
                   onClose()
                 }}
               >
-                <Text style={styles.optionText}>{item.label}</Text>
+                <Text style={[styles.optionText, item.value === selectedValue && styles.selectedOptionText]}>
+                  {item.label}
+                </Text>
               </TouchableOpacity>
             )}
           />
@@ -66,6 +68,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: theme.text,
   },
+  selectedOptionText: {
+    color: "white",
+    fontWeight: "bold",
+  },
   closeButton: {
     alignItems: "center",
     padding: 20,
@@ -79,4 +85,3 @@ const styles = StyleSheet.create({
 })
 
 export default PickerModal
-

@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { theme } from "../styles/theme"
-import BackButton from "../components/BackButton"
-import ProgressBar from "../components/ProgressBar"
+import { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { theme } from "../styles/theme";
+import BackButton from "../components/BackButton";
+import ProgressBar from "../components/ProgressBar";
+
+
 
 export default function OtherScreen() {
   const navigation = useNavigation()
@@ -19,28 +21,20 @@ export default function OtherScreen() {
       ...route.params,
       additionalInfo,
     })
-  }
+  };
+    
 
-  return (
+
+  
+  
+return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton style={styles.backButton} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProgressBar currentStep={gender === "male" ? 10 : 9} totalSteps={gender === "male" ? 11 : 10} />
-        <Text style={styles.title}>Additional Information</Text>
-
-        <Text style={styles.label}>
-          Is there anything else you would like to share about {name} e.g. Hobbies/Interests:
-        </Text>
-        <TextInput
-          style={styles.textArea}
-          value={additionalInfo}
-          onChangeText={setAdditionalInfo}
-          placeholder="Enter additional information"
-          multiline
-          numberOfLines={4}
-        />
-
-        <TouchableOpacity style={styles.button} onPress={handleNext}>
+        <ProgressBar currentStep={1} totalSteps={7} />
+        <Text style={styles.title}>Other</Text>
+        
+        <TouchableOpacity style={styles.button} onPress={handleNext || (() => navigation.navigate("Home"))}>
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -49,6 +43,12 @@ export default function OtherScreen() {
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.background,
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 100,
     paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
@@ -86,17 +87,16 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: theme.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
-    marginHorizontal: 20,
-    marginBottom: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 30,
   },
   buttonText: {
-    color: theme.textLight,
-    fontSize: 16,
+    color: "white",
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
   },
 })
-
