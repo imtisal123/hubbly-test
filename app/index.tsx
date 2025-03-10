@@ -1,3 +1,5 @@
+"use client"
+
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import LoginSignupScreen from "../screens/LoginSignupScreen"
 import PlaceholderScreen from "../screens/PlaceholderScreen"
@@ -10,7 +12,6 @@ import LocationScreen from "../screens/LocationScreen"
 import NationalityScreen from "../screens/NationalityScreen"
 import EducationScreen from "../screens/EducationScreen"
 import CareerScreen from "../screens/CareerScreen"
-import HomeScreen from "../screens/HomeScreen"
 import OtherScreen from "../screens/OtherScreen"
 import ProfilePicScreen from "../screens/ProfilePicScreen"
 import Congrats1Screen from "../screens/Congrats1Screen"
@@ -30,8 +31,11 @@ import Congrats3Screen from "../screens/Congrats3Screen"
 import FamilyDetailsScreen from "../screens/FamilyDetailsScreen"
 import MatchPreferencesScreen from "../screens/MatchPreferencesScreen"
 import FinalCongratsScreen from "../screens/FinalCongratsScreen"
+import BottomTabNavigator from "./BottomTabNavigator"
+import ProfileViewScreen from "../screens/ProfileViewScreen"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { AuthProvider, useAuth } from "../contexts/AuthContext"
+import { ProfileProvider } from "../contexts/ProfileContext"
 import { View, Text, ActivityIndicator } from "react-native"
 import { theme } from "../styles/theme"
 import { useEffect, useState } from "react"
@@ -46,7 +50,7 @@ function Navigation() {
   // Show a loading screen while checking authentication
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.background }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.background }}>
         <ActivityIndicator size="large" color={theme.primary} />
         <Text style={{ marginTop: 20, color: theme.text }}>Loading...</Text>
       </View>
@@ -88,7 +92,12 @@ function Navigation() {
           <Stack.Screen name="Congrats3" component={Congrats3Screen} />
           <Stack.Screen name="FamilyDetails" component={FamilyDetailsScreen} />
           <Stack.Screen name="MatchPreferences" component={MatchPreferencesScreen} />
-          <Stack.Screen name="FinalCongrats" component={FinalCongratsScreen} />
+          <Stack.Screen 
+            name="FinalCongrats" 
+            component={FinalCongratsScreen as any} // Type assertion to fix TypeScript error
+          />
+          <Stack.Screen name="ProfileView" component={ProfileViewScreen} />
+          <Stack.Screen name="MainTabs" component={BottomTabNavigator} />
         </>
       ) : !profile?.name ? (
         // Profile creation screens - if user is authenticated but profile is incomplete
@@ -119,14 +128,21 @@ function Navigation() {
           <Stack.Screen name="Congrats3" component={Congrats3Screen} />
           <Stack.Screen name="FamilyDetails" component={FamilyDetailsScreen} />
           <Stack.Screen name="MatchPreferences" component={MatchPreferencesScreen} />
-          <Stack.Screen name="FinalCongrats" component={FinalCongratsScreen} />
+          <Stack.Screen 
+            name="FinalCongrats" 
+            component={FinalCongratsScreen as any} // Type assertion to fix TypeScript error
+          />
+          <Stack.Screen name="ProfileView" component={ProfileViewScreen} />
+          <Stack.Screen name="MainTabs" component={BottomTabNavigator} />
         </>
       ) : (
         // Main app screens - for authenticated users with complete profiles
         <>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Other" component={OtherScreen} />
-          <Stack.Screen name="Placeholder" component={PlaceholderScreen} />
+          <Stack.Screen
+            name="MainTabs"
+            component={BottomTabNavigator}
+            initialParams={{ profile }} // Pass profile data here
+          />
         </>
       )}
     </Stack.Navigator>
@@ -134,47 +150,50 @@ function Navigation() {
 }
 
 export default function App() {
-  const [databaseReady, setDatabaseReady] = useState(false);
-  const [databaseError, setDatabaseError] = useState<string | null>(null);
+  const [databaseReady, setDatabaseReady] = useState(false)
+  const [databaseError, setDatabaseError] = useState<string | null>(null)
 
   useEffect(() => {
     // Set up the database when the app starts
     async function setupDatabase() {
       try {
-        const success = await ensureDatabaseSetup();
-        setDatabaseReady(success);
+        const success = await ensureDatabaseSetup()
+        setDatabaseReady(success)
         if (!success) {
-          setDatabaseError('Failed to set up database. Some features may not work correctly.');
+          setDatabaseError("Failed to set up database. Some features may not work correctly.")
         }
       } catch (error) {
-        console.error('Error setting up database:', error);
-        setDatabaseError('Error setting up database. Some features may not work correctly.');
-        setDatabaseReady(false);
+        console.error("Error setting up database:", error)
+        setDatabaseError("Error setting up database. Some features may not work correctly.")
+        setDatabaseReady(false)
       }
     }
 
-    setupDatabase();
-  }, []);
+    setupDatabase()
+  }, [])
 
   if (!databaseReady) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.background }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.background }}>
         <ActivityIndicator size="large" color={theme.primary} />
         <Text style={{ marginTop: 20, color: theme.text }}>Setting up database...</Text>
       </View>
-    );
+    )
   }
 
   return (
     <AuthProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        {databaseError && (
-          <View style={{ backgroundColor: '#ffcccc', padding: 10 }}>
-            <Text style={{ color: '#990000' }}>{databaseError}</Text>
-          </View>
-        )}
-        <Navigation />
-      </GestureHandlerRootView>
+      <ProfileProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          {databaseError && (
+            <View style={{ backgroundColor: "#ffcccc", padding: 10 }}>
+              <Text style={{ color: "#990000" }}>{databaseError}</Text>
+            </View>
+          )}
+          <Navigation />
+        </GestureHandlerRootView>
+      </ProfileProvider>
     </AuthProvider>
   )
 }
+

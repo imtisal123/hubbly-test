@@ -1,34 +1,58 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { theme } from "../styles/theme";
 import BackButton from "../components/BackButton";
 import ProgressBar from "../components/ProgressBar";
+import { useProfile } from "../contexts/ProfileContext";
 
 
 
 const SiblingCountScreen = () => {
-  const navigation = useNavigation()
-  const route = useRoute()
+  const navigation = useNavigation<any>()
+  const route = useRoute<any>()
   const { name } = route.params
+  const { dispatch } = useProfile()
 
   const [sisters, setSisters] = useState("")
   const [brothers, setBrothers] = useState("")
+  
+  // Initialize profile data in context when component mounts
+  useEffect(() => {
+    if (route.params) {
+      console.log('Updating ProfileContext from SiblingCountScreen:', JSON.stringify(route.params, null, 2));
+      dispatch({ type: 'NORMALIZE_PROFILE', payload: route.params });
+    }
+  }, []);
 
   const handleNext = () => {
-    const totalSiblings = Number.parseInt(sisters) + Number.parseInt(brothers)
+    const sistersCount = Number.parseInt(sisters) || 0;
+    const brothersCount = Number.parseInt(brothers) || 0;
+    const totalSiblings = sistersCount + brothersCount;
+    
+    // Create updated profile data
+    const profileData = {
+      ...route.params,
+      sisters: sistersCount,
+      brothers: brothersCount,
+      totalSiblings,
+    };
+    
+    // Update the profile context with the sibling count data
+    console.log('Updating ProfileContext with sibling count:', JSON.stringify(profileData, null, 2));
+    dispatch({ type: 'NORMALIZE_PROFILE', payload: profileData });
+    
     if (totalSiblings > 0) {
       navigation.navigate("SiblingDetails1", {
-        ...route.params,
-        sisters: Number.parseInt(sisters) || 0,
-        brothers: Number.parseInt(brothers) || 0,
+        ...profileData,
         currentSibling: 1,
-        totalSiblings,
       })
     } else {
-      navigation.navigate("Congrats3", route.params)
+      // Even if there are no siblings, we still save this information
+      // before skipping to the next screen
+      navigation.navigate("Congrats3", profileData)
     }
   };
     
@@ -36,7 +60,7 @@ const SiblingCountScreen = () => {
   
 return (
     <View style={styles.container}>
-      <BackButton style={styles.backButton} />
+      <BackButton />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <ProgressBar currentStep={1} totalSteps={7} />
         <Text style={styles.title}>Sibling Information</Text>

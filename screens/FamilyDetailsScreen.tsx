@@ -10,9 +10,9 @@ import PickerModal from "../components/PickerModal"
 import { TouchableOpacity } from "react-native-gesture-handler"
 
 const FamilyDetailsScreen = () => {
-  const navigation = useNavigation()
-  const route = useRoute()
-  const { name } = route.params
+  const navigation = useNavigation<any>()
+  const route = useRoute<any>()
+  const { name } = route.params as { name: string }
 
   const [familyEnvironment, setFamilyEnvironment] = useState("")
   const [additionalInfo, setAdditionalInfo] = useState("")
@@ -20,7 +20,8 @@ const FamilyDetailsScreen = () => {
 
   const handleNext = () => {
     if (familyEnvironment) {
-      navigation.navigate("MatchPreferences", { 
+      // Skip MatchPreferencesScreen and navigate directly to FinalCongrats
+      navigation.navigate("FinalCongrats", { 
         ...route.params,
         familyEnvironment, 
         additionalInfo 
@@ -32,9 +33,9 @@ const FamilyDetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <BackButton style={styles.backButton} />
+      <BackButton />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ProgressBar currentStep={6} totalSteps={7} />
+        <ProgressBar currentStep={6} totalSteps={6} />
         <Text style={styles.title}>{`Please add ${name}'s family details:`}</Text>
 
         <View style={styles.inputContainer}>

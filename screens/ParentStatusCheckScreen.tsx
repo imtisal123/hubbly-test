@@ -1,44 +1,55 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { theme } from "../styles/theme";
 import BackButton from "../components/BackButton";
 import ProgressBar from "../components/ProgressBar";
+import { useProfile } from "../contexts/ProfileContext";
 
 
 
 const ParentStatusCheckScreen = () => {
-  const navigation = useNavigation()
-  const route = useRoute()
+  const navigation = useNavigation<any>()
+  const route = useRoute<any>()
   const { name } = route.params
+  const { dispatch } = useProfile()
 
   const [motherAlive, setMotherAlive] = useState<boolean | null>(null)
   const [fatherAlive, setFatherAlive] = useState<boolean | null>(null)
+
+  // Initialize profile data in context when component mounts
+  useEffect(() => {
+    if (route.params) {
+      console.log('Updating ProfileContext from ParentStatusCheckScreen:', JSON.stringify(route.params, null, 2));
+      dispatch({ type: 'NORMALIZE_PROFILE', payload: route.params });
+    }
+  }, []);
 
   const handleNext = () => {
     if (motherAlive === null || fatherAlive === null) {
       alert("Please answer both questions before proceeding.")
       return
     }
+    
+    // Create updated profile data
+    const profileData = {
+      ...route.params,
+      motherAlive,
+      fatherAlive,
+    };
+    
+    // Update the profile context with the parent status data
+    console.log('Updating ProfileContext with parent status:', JSON.stringify(profileData, null, 2));
+    dispatch({ type: 'NORMALIZE_PROFILE', payload: profileData });
 
     if (!motherAlive && !fatherAlive) {
-      navigation.navigate("Congrats2", {
-        ...route.params,
-        motherAlive,
-        fatherAlive,
-      })
+      // If both parents are not alive, we still need to save this information
+      // before skipping to the next screen
+      navigation.navigate("Congrats2", profileData)
     } else if (motherAlive) {
-      navigation.navigate("MotherDetails", {
-        ...route.params,
-        motherAlive,
-        fatherAlive,
-      })
+      navigation.navigate("MotherDetails", profileData)
     } else {
-      navigation.navigate("FatherDetails", {
-        ...route.params,
-        motherAlive,
-        fatherAlive,
-      })
+      navigation.navigate("FatherDetails", profileData)
     }
   };
     
@@ -48,7 +59,7 @@ const ParentStatusCheckScreen = () => {
   
 return (
     <View style={styles.container}>
-      <BackButton style={styles.backButton} />
+      <BackButton />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <ProgressBar currentStep={1} totalSteps={7} />
         <Text style={styles.title}>Parent Status Check</Text>
@@ -165,7 +176,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   buttonDisabled: {
-    backgroundColor: theme.textMedium,
+    backgroundColor: theme.text,
     opacity: 0.7,
   },
   buttonText: {

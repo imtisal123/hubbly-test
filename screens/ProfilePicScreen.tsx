@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ScrollView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { theme } from "../styles/theme";
@@ -8,14 +8,25 @@ import BackButton from "../components/BackButton";
 import ProgressBar from "../components/ProgressBar";
 import { Camera } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
+import { useProfile } from "../contexts/ProfileContext";
 
 export default function ProfilePicScreen() {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const { name, gender } = route.params;
+  const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const { name, gender } = route.params as { name: string; gender: string };
+  const { state: profileState, dispatch } = useProfile();
 
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<string | null>(null);
   const [showOnlyToMatches, setShowOnlyToMatches] = useState(false);
+  
+  // Initialize profile data in context when component mounts
+  useEffect(() => {
+    // Update the profile context with the route params data
+    if (route.params) {
+      console.log('Updating ProfileContext from ProfilePicScreen:', JSON.stringify(route.params, null, 2));
+      dispatch({ type: 'NORMALIZE_PROFILE', payload: route.params });
+    }
+  }, []);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -35,18 +46,25 @@ export default function ProfilePicScreen() {
       Alert.alert("Error", "Please upload at least one picture");
       return;
     }
-    // Here you would typically upload the image to your server
-    // and then navigate to the next screen or complete the profile creation
-    navigation.navigate("Congrats1", {
+    
+    // Create a profile data object with the new image
+    const profileData = {
       ...route.params,
-      profilePicture: image,
+      profilePicture: image || undefined, // Use undefined instead of null for TypeScript compatibility
       showOnlyToMatches,
-    });
+    };
+    
+    // Update the profile context with the new data before navigation
+    console.log('Updating ProfileContext before navigation:', JSON.stringify(profileData, null, 2));
+    dispatch({ type: 'NORMALIZE_PROFILE', payload: profileData });
+    
+    // Navigate to the next screen with the updated profile data
+    navigation.navigate("Congrats1", profileData);
   };
   
   return (
     <View style={styles.container}>
-      <BackButton style={styles.backButton} />
+      <BackButton />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <ProgressBar
           currentStep={gender.toLowerCase() === "male" ? 11 : 10}
@@ -151,7 +169,7 @@ const styles = StyleSheet.create({
   privacyText: {
     textAlign: "center",
     marginBottom: 20,
-    color: theme.textDark,
+    color: theme.text,
     fontSize: 16,
   },
   checkboxContainer: {
@@ -184,7 +202,7 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     fontSize: 16,
-    color: theme.textDark,
+    color: theme.text,
   },
   button: {
     backgroundColor: theme.primary,
